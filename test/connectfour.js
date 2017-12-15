@@ -56,9 +56,9 @@ contract('Connect Four', function(accounts) {
   it('should allow joining a game as normal', async function(){
     var instance = await ConnectFour.deployed();
 
+    var txResult = await instance.joinGame(0,{from:accounts[1],value:payment});
     var currentTime = Date.now()/1000;
 
-    var txResult = await instance.joinGame(0,{from:accounts[1],value:payment});
     assert.equal(txResult.logs[0].event,"GameStart");
 
     var lastTimePlayed = await instance.getLastTimePlayed.call(0);
@@ -101,4 +101,31 @@ contract('Connect Four', function(accounts) {
     var playerTwo = await c4inst.getPlayerTwo.call(1);
     assert.equal(playerTwo, accounts[1]);
   })
+
+  it('should deny joining a restricted game when not the player', async function(){
+    var instance = await ConnectFour.deployed();
+    await assertWillRevert(()=>instance.joinGame(1,{value:payment,from:accounts[2]}))
+  })
+
+  it('should join a restricted game as normal', async function() {
+    var instance = await ConnectFour.deployed();
+
+    var txResult = await instance.joinGame(1,{from:accounts[1],value:payment});
+    var currentTime = Date.now()/1000;
+    assert.equal(txResult.logs[0].event,"GameStart");
+
+    var lastTimePlayed = await instance.getLastTimePlayed.call(1);
+    assert.closeTo(currentTime, lastTimePlayed.toNumber(), 1);
+
+    var p2address = await instance.getPlayerTwo.call(1);
+    assert.equal(p2address, accounts[1]);
+
+    var started = await instance.getIsStarted.call(1);
+    assert.isTrue(started);
+
+    var whoseTurn = await instance.getWhoseTurn.call(1);
+    assert.equal(whoseTurn.toNumber(), 1);
+  })
+
+
 });

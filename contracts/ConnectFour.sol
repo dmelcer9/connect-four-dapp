@@ -88,7 +88,6 @@ contract ConnectFour is PullPayment {
     _createNewGame(gameId);
   }
 
-
   function createNewRestrictedGame(address playerTwo) external payable {
     require(playerTwo != msg.sender);
     uint gameId = createUniqueId();
@@ -97,25 +96,21 @@ contract ConnectFour is PullPayment {
     _createNewGame(gameId);
   }
 
-  function _joinGame(uint gameId) private {
+  function joinGame(uint gameId) external payable {
     require(getPlayerOne(gameId) != 0);
     require(getPlayerOne(gameId) != msg.sender);
     require(msg.value == getBid(gameId));
 
-    games[gameId].lastTimePlayed = now;
-    games[gameId].isStarted = true;
-    games[gameId].whoseTurn = BoardPiece.RED;
-    GameStart(gameId);
-  }
-
-  function joinGame(uint gameId) external payable {
     if(getRestricted(gameId)){
       require(games[gameId].playerTwoBlack == msg.sender);
     } else {
       games[gameId].playerTwoBlack = msg.sender;
     }
 
-    _joinGame(gameId);
+    games[gameId].lastTimePlayed = now;
+    games[gameId].isStarted = true;
+    games[gameId].whoseTurn = BoardPiece.RED;
+    GameStart(gameId);
   }
 
 
