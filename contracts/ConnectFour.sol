@@ -28,6 +28,7 @@ contract ConnectFour is PullPayment {
     bool gameOver;
   }
 
+  event GameCreated(uint gameId, bool restricted);
   event GameStart(uint gameId);
   event MoveMade(uint gameId, BoardPiece who, uint8 position);
 
@@ -80,8 +81,13 @@ contract ConnectFour is PullPayment {
     uint id = createUniqueId();
     games[id].bid = msg.value;
     games[id].playerOneRed = msg.sender;
+    GameCreated(id, false);
   }
 
+  function joinGame(uint gameId) external payable {
+    require(getPlayerOne(gameId) != 0);
+    require(getPlayerOne(gameId) != msg.sender);
+  }
 
 
 }
