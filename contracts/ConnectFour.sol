@@ -26,9 +26,11 @@ contract ConnectFour is PullPayment {
     bool restricted;
     bool isStarted;
     bool gameOver;
-
-
   }
+
+  event GameStart(uint gameId);
+  event MoveMade(uint gameId, BoardPiece who, uint8 position);
+
 
   uint nextID;
 
@@ -78,7 +80,8 @@ contract ConnectFour is PullPayment {
     uint id = createUniqueId();
     games[id].bid = msg.value;
     games[id].playerOneRed = msg.sender;
-
   }
+
+
 
 }

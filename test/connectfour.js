@@ -15,7 +15,10 @@ contract('Connect Four', function(accounts) {
       assert.equal(playerOne,accounts[0]);
       return c4inst.getBoard.call(0);
     }).then(function(board){
-      console.log(board);
+      var actualBoard = board.map(e=>e.toNumber());
+      assert.deepEqual(actualBoard, Array(42).fill(0));
     });
   });
+
+
 });
