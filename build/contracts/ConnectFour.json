@@ -1,0 +1,2618 @@
+{
+  "contractName": "ConnectFour",
+  "abi": [
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "totalPayments",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "name": "gameId",
+          "type": "uint256"
+        }
+      ],
+      "name": "getLastTimePlayed",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "name": "gameId",
+          "type": "uint256"
+        }
+      ],
+      "name": "getBid",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "name": "gameId",
+          "type": "uint256"
+        }
+      ],
+      "name": "getPlayerTwo",
+      "outputs": [
+        {
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "name": "gameId",
+          "type": "uint256"
+        }
+      ],
+      "name": "getBoard",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint8[42]"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "name": "gameId",
+          "type": "uint256"
+        }
+      ],
+      "name": "getGameOver",
+      "outputs": [
+        {
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [],
+      "name": "withdrawPayments",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "name": "gameId",
+          "type": "uint256"
+        }
+      ],
+      "name": "getIsStarted",
+      "outputs": [
+        {
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "name": "gameId",
+          "type": "uint256"
+        }
+      ],
+      "name": "getRestricted",
+      "outputs": [
+        {
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "name": "gameId",
+          "type": "uint256"
+        }
+      ],
+      "name": "getWhoseTurn",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint8"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "name": "gameId",
+          "type": "uint256"
+        }
+      ],
+      "name": "getPlayerOne",
+      "outputs": [
+        {
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "payments",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [],
+      "name": "createNewGame",
+      "outputs": [],
+      "payable": true,
+      "stateMutability": "payable",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x6060604052341561000f57600080fd5b6107e08061001e6000396000f3006060604052600436106100c4576000357c0100000000000000000000000000000000000000000000000000000000900463ffffffff1680625b4487146100c95780630628b6ba146100f25780633c889e6f146101295780633d412d0f1461016057806345e09e54146101c35780635e0d8a26146102225780636103d70b1461025d5780637e24c66b146102725780639e693e5d146102ad578063a100724c146102e8578063a960f05b1461032d578063e2982c2114610390578063eb87eb5e146103dd575b600080fd5b34156100d457600080fd5b6100dc6103e7565b6040518082815260200191505060405180910390f35b34156100fd57600080fd5b61011360048080359060200190919050506103ed565b6040518082815260200191505060405180910390f35b341561013457600080fd5b61014a600480803590602001909190505061040d565b6040518082815260200191505060405180910390f35b341561016b57600080fd5b610181600480803590602001909190505061042d565b604051808273ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200191505060405180910390f35b34156101ce57600080fd5b6101e4600480803590602001909190505061046d565b6040518082602a60200280838360005b8381101561020f5780820151818401526020810190506101f4565b5050505090500191505060405180910390f35b341561022d57600080fd5b61024360048080359060200190919050506104fc565b604051808215151515815260200191505060405180910390f35b341561026857600080fd5b610270610529565b005b341561027d57600080fd5b6102936004808035906020019091905050610646565b604051808215151515815260200191505060405180910390f35b34156102b857600080fd5b6102ce6004808035906020019091905050610673565b604051808215151515815260200191505060405180910390f35b34156102f357600080fd5b61030960048080359060200190919050506106a0565b6040518082600281111561031957fe5b60ff16815260200191505060405180910390f35b341561033857600080fd5b61034e60048080359060200190919050506106cd565b604051808273ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200191505060405180910390f35b341561039b57600080fd5b6103c7600480803573ffffffffffffffffffffffffffffffffffffffff1690602001909190505061070d565b6040518082815260200191505060405180910390f35b6103e5610725565b005b60015481565b600060036000838152602001908152602001600020600101549050919050565b600060036000838152602001908152602001600020600001549050919050565b60006003600083815260200190815260200160002060030160009054906101000a900473ffffffffffffffffffffffffffffffffffffffff169050919050565b610475610780565b60036000838152602001908152602001600020600401602a806020026040519081016040528092919082602a80156104f0576020028201916000905b82829054906101000a900460ff1660028111156104ca57fe5b815260200190600101906020826000010492830192600103820291508084116104b15790505b50505050509050919050565b60006003600083815260200190815260200160002060060160039054906101000a900460ff169050919050565b6000803391506000808373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020019081526020016000205490506000811415151561058057600080fd5b803073ffffffffffffffffffffffffffffffffffffffff1631101515156105a657600080fd5b6105bb8160015461074f90919063ffffffff16565b60018190555060008060008473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff168152602001908152602001600020819055508173ffffffffffffffffffffffffffffffffffffffff166108fc829081150290604051600060405180830381858888f19350505050151561064257fe5b5050565b60006003600083815260200190815260200160002060060160029054906101000a900460ff169050919050565b60006003600083815260200190815260200160002060060160019054906101000a900460ff169050919050565b60006003600083815260200190815260200160002060060160009054906101000a900460ff169050919050565b60006003600083815260200190815260200160002060020160009054906101000a900473ffffffffffffffffffffffffffffffffffffffff169050919050565b60006020528060005260406000206000915090505481565b600061072f610768565b905034600360008381526020019081526020016000206000018190555050565b600082821115151561075d57fe5b818303905092915050565b60006002600081548092919060010191905055905090565b61054060405190810160405280602a905b6000600281111561079e57fe5b81526020019060019003908161079157905050905600a165627a7a72305820c9f163752593b606d798acad0c45cde11ca232fc653d1dcf13088f32aae4bbc50029",
+  "deployedBytecode": "0x6060604052600436106100c4576000357c0100000000000000000000000000000000000000000000000000000000900463ffffffff1680625b4487146100c95780630628b6ba146100f25780633c889e6f146101295780633d412d0f1461016057806345e09e54146101c35780635e0d8a26146102225780636103d70b1461025d5780637e24c66b146102725780639e693e5d146102ad578063a100724c146102e8578063a960f05b1461032d578063e2982c2114610390578063eb87eb5e146103dd575b600080fd5b34156100d457600080fd5b6100dc6103e7565b6040518082815260200191505060405180910390f35b34156100fd57600080fd5b61011360048080359060200190919050506103ed565b6040518082815260200191505060405180910390f35b341561013457600080fd5b61014a600480803590602001909190505061040d565b6040518082815260200191505060405180910390f35b341561016b57600080fd5b610181600480803590602001909190505061042d565b604051808273ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200191505060405180910390f35b34156101ce57600080fd5b6101e4600480803590602001909190505061046d565b6040518082602a60200280838360005b8381101561020f5780820151818401526020810190506101f4565b5050505090500191505060405180910390f35b341561022d57600080fd5b61024360048080359060200190919050506104fc565b604051808215151515815260200191505060405180910390f35b341561026857600080fd5b610270610529565b005b341561027d57600080fd5b6102936004808035906020019091905050610646565b604051808215151515815260200191505060405180910390f35b34156102b857600080fd5b6102ce6004808035906020019091905050610673565b604051808215151515815260200191505060405180910390f35b34156102f357600080fd5b61030960048080359060200190919050506106a0565b6040518082600281111561031957fe5b60ff16815260200191505060405180910390f35b341561033857600080fd5b61034e60048080359060200190919050506106cd565b604051808273ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200191505060405180910390f35b341561039b57600080fd5b6103c7600480803573ffffffffffffffffffffffffffffffffffffffff1690602001909190505061070d565b6040518082815260200191505060405180910390f35b6103e5610725565b005b60015481565b600060036000838152602001908152602001600020600101549050919050565b600060036000838152602001908152602001600020600001549050919050565b60006003600083815260200190815260200160002060030160009054906101000a900473ffffffffffffffffffffffffffffffffffffffff169050919050565b610475610780565b60036000838152602001908152602001600020600401602a806020026040519081016040528092919082602a80156104f0576020028201916000905b82829054906101000a900460ff1660028111156104ca57fe5b815260200190600101906020826000010492830192600103820291508084116104b15790505b50505050509050919050565b60006003600083815260200190815260200160002060060160039054906101000a900460ff169050919050565b6000803391506000808373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020019081526020016000205490506000811415151561058057600080fd5b803073ffffffffffffffffffffffffffffffffffffffff1631101515156105a657600080fd5b6105bb8160015461074f90919063ffffffff16565b60018190555060008060008473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff168152602001908152602001600020819055508173ffffffffffffffffffffffffffffffffffffffff166108fc829081150290604051600060405180830381858888f19350505050151561064257fe5b5050565b60006003600083815260200190815260200160002060060160029054906101000a900460ff169050919050565b60006003600083815260200190815260200160002060060160019054906101000a900460ff169050919050565b60006003600083815260200190815260200160002060060160009054906101000a900460ff169050919050565b60006003600083815260200190815260200160002060020160009054906101000a900473ffffffffffffffffffffffffffffffffffffffff169050919050565b60006020528060005260406000206000915090505481565b600061072f610768565b905034600360008381526020019081526020016000206000018190555050565b600082821115151561075d57fe5b818303905092915050565b60006002600081548092919060010191905055905090565b61054060405190810160405280602a905b6000600281111561079e57fe5b81526020019060019003908161079157905050905600a165627a7a72305820c9f163752593b606d798acad0c45cde11ca232fc653d1dcf13088f32aae4bbc50029",
+  "sourceMap": "205:1836:0:-;;;;;;;;;;;;;;;;;",
+  "deployedSourceMap": "205:1836:0:-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;321:28:2;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;945:115:0;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;847:94;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;1179:113;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;1296:107;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;23:1:-1;8:100;33:3;30:1;27:2;8:100;;;99:1;94:3;90;84:5;80:1;75:3;71;64:6;52:2;49:1;45:3;40:15;;8:100;;;12:14;3:109;;;;;;;;;;;;;;;;1742:103:0;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;769:285:2;;;;;;;;;;;;;;1633:105:0;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;1522:107;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;1407:111;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;1064;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;274:43:2;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;1928:110:0;;;;;;321:28:2;;;;:::o;945:115:0:-;1009:4;1027:5;:13;1033:6;1027:13;;;;;;;;;;;:28;;;1020:35;;945:115;;;:::o;847:94::-;900:4;919:5;:13;925:6;919:13;;;;;;;;;;;:17;;;912:24;;847:94;;;:::o;1179:113::-;1238:7;1259:5;:13;1265:6;1259:13;;;;;;;;;;;:28;;;;;;;;;;;;1252:35;;1179:113;;;:::o;1296:107::-;1351:14;;:::i;:::-;1379:5;:13;1385:6;1379:13;;;;;;;;;;;:19;;1372:26;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;1296:107;;;:::o;1742:103::-;1800:4;1818:5;:13;1824:6;1818:13;;;;;;;;;;;:22;;;;;;;;;;;;1811:29;;1742:103;;;:::o;769:285:2:-;810:13;842:15;826:10;810:26;;860:8;:15;869:5;860:15;;;;;;;;;;;;;;;;842:33;;901:1;890:7;:12;;882:21;;;;;;;;933:7;917:4;:12;;;:23;;909:32;;;;;;;;964:26;982:7;964:13;;:17;;:26;;;;:::i;:::-;948:13;:42;;;;1014:1;996:8;:15;1005:5;996:15;;;;;;;;;;;;;;;:19;;;;1029:5;:10;;:19;1040:7;1029:19;;;;;;;;;;;;;;;;;;;;;;;1022:27;;;;;;769:285;;:::o;1633:105:0:-;1692:4;1710:5;:13;1716:6;1710:13;;;;;;;;;;;:23;;;;;;;;;;;;1703:30;;1633:105;;;:::o;1522:107::-;1582:4;1600:5;:13;1606:6;1600:13;;;;;;;;;;;:24;;;;;;;;;;;;1593:31;;1522:107;;;:::o;1407:111::-;1466:10;1490:5;:13;1496:6;1490:13;;;;;;;;;;;:23;;;;;;;;;;;;1483:30;;1407:111;;;:::o;1064:::-;1123:7;1144:5;:13;1150:6;1144:13;;;;;;;;;;;:26;;;;;;;;;;;;1137:33;;1064:111;;;:::o;274:43:2:-;;;;;;;;;;;;;;;;;:::o;1928:110:0:-;1976:7;1986:16;:14;:16::i;:::-;1976:26;;2024:9;2008:5;:9;2014:2;2008:9;;;;;;;;;;;:13;;:25;;;;1928:110;:::o;584::1:-;642:7;669:1;664;:6;;657:14;;;;;;688:1;684;:5;677:12;;584:110;;;;:::o;1849:75:0:-;1892:4;1911:6;;:8;;;;;;;;;;;;1904:15;;1849:75;:::o;205:1836::-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;:::o",
+  "source": "//pragma solidity ^0.4.14\n\nimport '../node_modules/zeppelin-solidity/contracts/payment/PullPayment.sol';\n//function asyncSend(address dest, uint256 amount) internal;\n//function withdrawPayments() public;\n\ncontract ConnectFour is PullPayment {\n\n  enum BoardPiece {NONE, RED, BLACK}\n  struct GameState {\n    uint bid; //How much each player bids\n    uint lastTimePlayed; //When was the last move made?\n\n    address playerOneRed;\n    address playerTwoBlack;\n\n    //Board is 7 columns by 6 rows\n    //0 is the bottom-left corner of the board\n    //1 is the second from the left on the bottom\n    //6 is the botto-right corner\n    //7 is the left on the second-to-bottom row\n    BoardPiece[42] board;\n\n    BoardPiece whoseTurn;\n\n    bool restricted;\n    bool isStarted;\n    bool gameOver;\n\n\n  }\n\n  uint nextID;\n\n  mapping (uint => GameState) games;\n\n  function getBid(uint gameId) constant public returns(uint) {\n    return games[gameId].bid;\n  }\n\n  function getLastTimePlayed(uint gameId) constant public returns(uint){\n    return games[gameId].lastTimePlayed;\n  }\n\n  function getPlayerOne(uint gameId) constant public returns(address){\n    return games[gameId].playerOneRed;\n  }\n\n  function getPlayerTwo(uint gameId) constant public returns(address){\n    return games[gameId].playerTwoBlack;\n  }\n\n  function getBoard(uint gameId) constant public returns(BoardPiece[42]){\n    return games[gameId].board;\n  }\n\n  function getWhoseTurn(uint gameId) constant public returns(BoardPiece){\n    return games[gameId].whoseTurn;\n  }\n\n  function getRestricted(uint gameId) constant public returns(bool){\n    return games[gameId].restricted;\n  }\n\n  function getIsStarted(uint gameId) constant public returns(bool){\n    return games[gameId].isStarted;\n  }\n\n  function getGameOver(uint gameId) constant public returns(bool){\n    return games[gameId].gameOver;\n  }\n\n  function createUniqueId() internal returns(uint) {\n    return nextID++;\n  }\n\n  function createNewGame() external payable {\n    uint id = createUniqueId();\n    games[id].bid = msg.value;\n  }\n\n}\n",
+  "sourcePath": "/home/dmelcer9/ethdev/c4/contracts/ConnectFour.sol",
+  "ast": {
+    "attributes": {
+      "absolutePath": "/home/dmelcer9/ethdev/c4/contracts/ConnectFour.sol",
+      "exportedSymbols": {
+        "ConnectFour": [
+          180
+        ]
+      }
+    },
+    "children": [
+      {
+        "attributes": {
+          "SourceUnit": 366,
+          "absolutePath": "/home/dmelcer9/ethdev/c4/node_modules/zeppelin-solidity/contracts/payment/PullPayment.sol",
+          "file": "../node_modules/zeppelin-solidity/contracts/payment/PullPayment.sol",
+          "scope": 181,
+          "symbolAliases": [
+            null
+          ],
+          "unitAlias": ""
+        },
+        "id": 1,
+        "name": "ImportDirective",
+        "src": "27:77:0"
+      },
+      {
+        "attributes": {
+          "contractDependencies": [
+            365
+          ],
+          "contractKind": "contract",
+          "documentation": null,
+          "fullyImplemented": true,
+          "linearizedBaseContracts": [
+            180,
+            365
+          ],
+          "name": "ConnectFour",
+          "scope": 181
+        },
+        "children": [
+          {
+            "attributes": {
+              "arguments": [
+                null
+              ]
+            },
+            "children": [
+              {
+                "attributes": {
+                  "contractScope": null,
+                  "name": "PullPayment",
+                  "referencedDeclaration": 365,
+                  "type": "contract PullPayment"
+                },
+                "id": 2,
+                "name": "UserDefinedTypeName",
+                "src": "229:11:0"
+              }
+            ],
+            "id": 3,
+            "name": "InheritanceSpecifier",
+            "src": "229:11:0"
+          },
+          {
+            "attributes": {
+              "canonicalName": "ConnectFour.BoardPiece",
+              "name": "BoardPiece"
+            },
+            "children": [
+              {
+                "attributes": {
+                  "name": "NONE"
+                },
+                "id": 4,
+                "name": "EnumValue",
+                "src": "263:4:0"
+              },
+              {
+                "attributes": {
+                  "name": "RED"
+                },
+                "id": 5,
+                "name": "EnumValue",
+                "src": "269:3:0"
+              },
+              {
+                "attributes": {
+                  "name": "BLACK"
+                },
+                "id": 6,
+                "name": "EnumValue",
+                "src": "274:5:0"
+              }
+            ],
+            "id": 7,
+            "name": "EnumDefinition",
+            "src": "246:34:0"
+          },
+          {
+            "attributes": {
+              "canonicalName": "ConnectFour.GameState",
+              "name": "GameState",
+              "scope": 180,
+              "visibility": "public"
+            },
+            "children": [
+              {
+                "attributes": {
+                  "constant": false,
+                  "name": "bid",
+                  "scope": 28,
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "type": "uint256",
+                  "value": null,
+                  "visibility": "internal"
+                },
+                "children": [
+                  {
+                    "attributes": {
+                      "name": "uint",
+                      "type": "uint256"
+                    },
+                    "id": 8,
+                    "name": "ElementaryTypeName",
+                    "src": "306:4:0"
+                  }
+                ],
+                "id": 9,
+                "name": "VariableDeclaration",
+                "src": "306:8:0"
+              },
+              {
+                "attributes": {
+                  "constant": false,
+                  "name": "lastTimePlayed",
+                  "scope": 28,
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "type": "uint256",
+                  "value": null,
+                  "visibility": "internal"
+                },
+                "children": [
+                  {
+                    "attributes": {
+                      "name": "uint",
+                      "type": "uint256"
+                    },
+                    "id": 10,
+                    "name": "ElementaryTypeName",
+                    "src": "348:4:0"
+                  }
+                ],
+                "id": 11,
+                "name": "VariableDeclaration",
+                "src": "348:19:0"
+              },
+              {
+                "attributes": {
+                  "constant": false,
+                  "name": "playerOneRed",
+                  "scope": 28,
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "type": "address",
+                  "value": null,
+                  "visibility": "internal"
+                },
+                "children": [
+                  {
+                    "attributes": {
+                      "name": "address",
+                      "type": "address"
+                    },
+                    "id": 12,
+                    "name": "ElementaryTypeName",
+                    "src": "405:7:0"
+                  }
+                ],
+                "id": 13,
+                "name": "VariableDeclaration",
+                "src": "405:20:0"
+              },
+              {
+                "attributes": {
+                  "constant": false,
+                  "name": "playerTwoBlack",
+                  "scope": 28,
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "type": "address",
+                  "value": null,
+                  "visibility": "internal"
+                },
+                "children": [
+                  {
+                    "attributes": {
+                      "name": "address",
+                      "type": "address"
+                    },
+                    "id": 14,
+                    "name": "ElementaryTypeName",
+                    "src": "431:7:0"
+                  }
+                ],
+                "id": 15,
+                "name": "VariableDeclaration",
+                "src": "431:22:0"
+              },
+              {
+                "attributes": {
+                  "constant": false,
+                  "name": "board",
+                  "scope": 28,
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "type": "enum ConnectFour.BoardPiece[42] storage pointer",
+                  "value": null,
+                  "visibility": "internal"
+                },
+                "children": [
+                  {
+                    "attributes": {
+                      "type": "enum ConnectFour.BoardPiece[42] storage pointer"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "contractScope": null,
+                          "name": "BoardPiece",
+                          "referencedDeclaration": 7,
+                          "type": "enum ConnectFour.BoardPiece"
+                        },
+                        "id": 16,
+                        "name": "UserDefinedTypeName",
+                        "src": "674:10:0"
+                      },
+                      {
+                        "attributes": {
+                          "argumentTypes": null,
+                          "hexvalue": "3432",
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": false,
+                          "lValueRequested": false,
+                          "subdenomination": null,
+                          "token": "number",
+                          "type": "int_const 42",
+                          "value": "42"
+                        },
+                        "id": 17,
+                        "name": "Literal",
+                        "src": "685:2:0"
+                      }
+                    ],
+                    "id": 18,
+                    "name": "ArrayTypeName",
+                    "src": "674:14:0"
+                  }
+                ],
+                "id": 19,
+                "name": "VariableDeclaration",
+                "src": "674:20:0"
+              },
+              {
+                "attributes": {
+                  "constant": false,
+                  "name": "whoseTurn",
+                  "scope": 28,
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "type": "enum ConnectFour.BoardPiece",
+                  "value": null,
+                  "visibility": "internal"
+                },
+                "children": [
+                  {
+                    "attributes": {
+                      "contractScope": null,
+                      "name": "BoardPiece",
+                      "referencedDeclaration": 7,
+                      "type": "enum ConnectFour.BoardPiece"
+                    },
+                    "id": 20,
+                    "name": "UserDefinedTypeName",
+                    "src": "701:10:0"
+                  }
+                ],
+                "id": 21,
+                "name": "VariableDeclaration",
+                "src": "701:20:0"
+              },
+              {
+                "attributes": {
+                  "constant": false,
+                  "name": "restricted",
+                  "scope": 28,
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "type": "bool",
+                  "value": null,
+                  "visibility": "internal"
+                },
+                "children": [
+                  {
+                    "attributes": {
+                      "name": "bool",
+                      "type": "bool"
+                    },
+                    "id": 22,
+                    "name": "ElementaryTypeName",
+                    "src": "728:4:0"
+                  }
+                ],
+                "id": 23,
+                "name": "VariableDeclaration",
+                "src": "728:15:0"
+              },
+              {
+                "attributes": {
+                  "constant": false,
+                  "name": "isStarted",
+                  "scope": 28,
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "type": "bool",
+                  "value": null,
+                  "visibility": "internal"
+                },
+                "children": [
+                  {
+                    "attributes": {
+                      "name": "bool",
+                      "type": "bool"
+                    },
+                    "id": 24,
+                    "name": "ElementaryTypeName",
+                    "src": "749:4:0"
+                  }
+                ],
+                "id": 25,
+                "name": "VariableDeclaration",
+                "src": "749:14:0"
+              },
+              {
+                "attributes": {
+                  "constant": false,
+                  "name": "gameOver",
+                  "scope": 28,
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "type": "bool",
+                  "value": null,
+                  "visibility": "internal"
+                },
+                "children": [
+                  {
+                    "attributes": {
+                      "name": "bool",
+                      "type": "bool"
+                    },
+                    "id": 26,
+                    "name": "ElementaryTypeName",
+                    "src": "769:4:0"
+                  }
+                ],
+                "id": 27,
+                "name": "VariableDeclaration",
+                "src": "769:13:0"
+              }
+            ],
+            "id": 28,
+            "name": "StructDefinition",
+            "src": "283:506:0"
+          },
+          {
+            "attributes": {
+              "constant": false,
+              "name": "nextID",
+              "scope": 180,
+              "stateVariable": true,
+              "storageLocation": "default",
+              "type": "uint256",
+              "value": null,
+              "visibility": "internal"
+            },
+            "children": [
+              {
+                "attributes": {
+                  "name": "uint",
+                  "type": "uint256"
+                },
+                "id": 29,
+                "name": "ElementaryTypeName",
+                "src": "793:4:0"
+              }
+            ],
+            "id": 30,
+            "name": "VariableDeclaration",
+            "src": "793:11:0"
+          },
+          {
+            "attributes": {
+              "constant": false,
+              "name": "games",
+              "scope": 180,
+              "stateVariable": true,
+              "storageLocation": "default",
+              "type": "mapping(uint256 => struct ConnectFour.GameState storage ref)",
+              "value": null,
+              "visibility": "internal"
+            },
+            "children": [
+              {
+                "attributes": {
+                  "type": "mapping(uint256 => struct ConnectFour.GameState storage ref)"
+                },
+                "children": [
+                  {
+                    "attributes": {
+                      "name": "uint",
+                      "type": "uint256"
+                    },
+                    "id": 31,
+                    "name": "ElementaryTypeName",
+                    "src": "818:4:0"
+                  },
+                  {
+                    "attributes": {
+                      "contractScope": null,
+                      "name": "GameState",
+                      "referencedDeclaration": 28,
+                      "type": "struct ConnectFour.GameState storage pointer"
+                    },
+                    "id": 32,
+                    "name": "UserDefinedTypeName",
+                    "src": "826:9:0"
+                  }
+                ],
+                "id": 33,
+                "name": "Mapping",
+                "src": "809:27:0"
+              }
+            ],
+            "id": 34,
+            "name": "VariableDeclaration",
+            "src": "809:33:0"
+          },
+          {
+            "attributes": {
+              "constant": true,
+              "implemented": true,
+              "isConstructor": false,
+              "modifiers": [
+                null
+              ],
+              "name": "getBid",
+              "payable": false,
+              "scope": 180,
+              "stateMutability": "view",
+              "superFunction": null,
+              "visibility": "public"
+            },
+            "children": [
+              {
+                "children": [
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "name": "gameId",
+                      "scope": 47,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "uint256",
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "uint",
+                          "type": "uint256"
+                        },
+                        "id": 35,
+                        "name": "ElementaryTypeName",
+                        "src": "863:4:0"
+                      }
+                    ],
+                    "id": 36,
+                    "name": "VariableDeclaration",
+                    "src": "863:11:0"
+                  }
+                ],
+                "id": 37,
+                "name": "ParameterList",
+                "src": "862:13:0"
+              },
+              {
+                "children": [
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "name": "",
+                      "scope": 47,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "uint256",
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "uint",
+                          "type": "uint256"
+                        },
+                        "id": 38,
+                        "name": "ElementaryTypeName",
+                        "src": "900:4:0"
+                      }
+                    ],
+                    "id": 39,
+                    "name": "VariableDeclaration",
+                    "src": "900:4:0"
+                  }
+                ],
+                "id": 40,
+                "name": "ParameterList",
+                "src": "899:6:0"
+              },
+              {
+                "children": [
+                  {
+                    "attributes": {
+                      "functionReturnParameters": 40
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "argumentTypes": null,
+                          "isConstant": false,
+                          "isLValue": true,
+                          "isPure": false,
+                          "lValueRequested": false,
+                          "member_name": "bid",
+                          "referencedDeclaration": 9,
+                          "type": "uint256"
+                        },
+                        "children": [
+                          {
+                            "attributes": {
+                              "argumentTypes": null,
+                              "isConstant": false,
+                              "isLValue": true,
+                              "isPure": false,
+                              "lValueRequested": false,
+                              "type": "struct ConnectFour.GameState storage ref"
+                            },
+                            "children": [
+                              {
+                                "attributes": {
+                                  "argumentTypes": null,
+                                  "overloadedDeclarations": [
+                                    null
+                                  ],
+                                  "referencedDeclaration": 34,
+                                  "type": "mapping(uint256 => struct ConnectFour.GameState storage ref)",
+                                  "value": "games"
+                                },
+                                "id": 41,
+                                "name": "Identifier",
+                                "src": "919:5:0"
+                              },
+                              {
+                                "attributes": {
+                                  "argumentTypes": null,
+                                  "overloadedDeclarations": [
+                                    null
+                                  ],
+                                  "referencedDeclaration": 36,
+                                  "type": "uint256",
+                                  "value": "gameId"
+                                },
+                                "id": 42,
+                                "name": "Identifier",
+                                "src": "925:6:0"
+                              }
+                            ],
+                            "id": 43,
+                            "name": "IndexAccess",
+                            "src": "919:13:0"
+                          }
+                        ],
+                        "id": 44,
+                        "name": "MemberAccess",
+                        "src": "919:17:0"
+                      }
+                    ],
+                    "id": 45,
+                    "name": "Return",
+                    "src": "912:24:0"
+                  }
+                ],
+                "id": 46,
+                "name": "Block",
+                "src": "906:35:0"
+              }
+            ],
+            "id": 47,
+            "name": "FunctionDefinition",
+            "src": "847:94:0"
+          },
+          {
+            "attributes": {
+              "constant": true,
+              "implemented": true,
+              "isConstructor": false,
+              "modifiers": [
+                null
+              ],
+              "name": "getLastTimePlayed",
+              "payable": false,
+              "scope": 180,
+              "stateMutability": "view",
+              "superFunction": null,
+              "visibility": "public"
+            },
+            "children": [
+              {
+                "children": [
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "name": "gameId",
+                      "scope": 60,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "uint256",
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "uint",
+                          "type": "uint256"
+                        },
+                        "id": 48,
+                        "name": "ElementaryTypeName",
+                        "src": "972:4:0"
+                      }
+                    ],
+                    "id": 49,
+                    "name": "VariableDeclaration",
+                    "src": "972:11:0"
+                  }
+                ],
+                "id": 50,
+                "name": "ParameterList",
+                "src": "971:13:0"
+              },
+              {
+                "children": [
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "name": "",
+                      "scope": 60,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "uint256",
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "type": "uint256",
+                          "name": "uint"
+                        },
+                        "children": [
+                          {
+                            "attributes": {
+                              "contractScope": null,
+                              "name": "BoardPiece",
+                              "referencedDeclaration": 7,
+                              "type": "enum ConnectFour.BoardPiece"
+                            },
+                            "id": 51,
+                            "name": "UserDefinedTypeName",
+                            "src": "1000:10:0"
+                          },
+                          {
+                            "attributes": {
+                              "argumentTypes": null,
+                              "hexvalue": "3432",
+                              "isConstant": false,
+                              "isLValue": false,
+                              "isPure": false,
+                              "lValueRequested": false,
+                              "subdenomination": null,
+                              "token": "number",
+                              "type": "int_const 42",
+                              "value": "42"
+                            },
+                            "id": 52,
+                            "name": "Literal",
+                            "src": "1011:2:0"
+                          }
+                        ],
+                        "id": 51,
+                        "name": "ElementaryTypeName",
+                        "src": "1009:4:0"
+                      }
+                    ],
+                    "id": 52,
+                    "name": "VariableDeclaration",
+                    "src": "1009:4:0"
+                  }
+                ],
+                "id": 53,
+                "name": "ParameterList",
+                "src": "1008:6:0"
+              },
+              {
+                "children": [
+                  {
+                    "attributes": {
+                      "functionReturnParameters": 53
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "argumentTypes": null,
+                          "isConstant": false,
+                          "isLValue": true,
+                          "isPure": false,
+                          "lValueRequested": false,
+                          "member_name": "lastTimePlayed",
+                          "referencedDeclaration": 11,
+                          "type": "uint256"
+                        },
+                        "children": [
+                          {
+                            "attributes": {
+                              "argumentTypes": null,
+                              "isConstant": false,
+                              "isLValue": true,
+                              "isPure": false,
+                              "lValueRequested": false,
+                              "type": "struct ConnectFour.GameState storage ref"
+                            },
+                            "children": [
+                              {
+                                "attributes": {
+                                  "argumentTypes": null,
+                                  "overloadedDeclarations": [
+                                    null
+                                  ],
+                                  "referencedDeclaration": 34,
+                                  "type": "mapping(uint256 => struct ConnectFour.GameState storage ref)",
+                                  "value": "games"
+                                },
+                                "id": 54,
+                                "name": "Identifier",
+                                "src": "1027:5:0"
+                              },
+                              {
+                                "attributes": {
+                                  "argumentTypes": null,
+                                  "overloadedDeclarations": [
+                                    null
+                                  ],
+                                  "referencedDeclaration": 49,
+                                  "type": "uint256",
+                                  "value": "gameId"
+                                },
+                                "id": 55,
+                                "name": "Identifier",
+                                "src": "1033:6:0"
+                              }
+                            ],
+                            "id": 56,
+                            "name": "IndexAccess",
+                            "src": "1027:13:0"
+                          }
+                        ],
+                        "id": 57,
+                        "name": "MemberAccess",
+                        "src": "1027:28:0"
+                      }
+                    ],
+                    "id": 58,
+                    "name": "Return",
+                    "src": "1020:35:0"
+                  }
+                ],
+                "id": 59,
+                "name": "Block",
+                "src": "1014:46:0"
+              }
+            ],
+            "id": 60,
+            "name": "FunctionDefinition",
+            "src": "945:115:0"
+          },
+          {
+            "attributes": {
+              "constant": true,
+              "implemented": true,
+              "isConstructor": false,
+              "modifiers": [
+                null
+              ],
+              "name": "getPlayerOne",
+              "payable": false,
+              "scope": 180,
+              "stateMutability": "view",
+              "superFunction": null,
+              "visibility": "public"
+            },
+            "children": [
+              {
+                "attributes": {
+                  "parameters": [
+                    null
+                  ]
+                },
+                "children": [
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "name": "gameId",
+                      "scope": 73,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "uint256",
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "uint",
+                          "type": "uint256"
+                        },
+                        "id": 61,
+                        "name": "ElementaryTypeName",
+                        "src": "1086:4:0"
+                      }
+                    ],
+                    "id": 62,
+                    "name": "VariableDeclaration",
+                    "src": "1086:11:0"
+                  }
+                ],
+                "id": 63,
+                "name": "ParameterList",
+                "src": "1085:13:0"
+              },
+              {
+                "children": [
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "name": "",
+                      "scope": 73,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "address",
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "address",
+                          "type": "address"
+                        },
+                        "id": 64,
+                        "name": "ElementaryTypeName",
+                        "src": "1123:7:0"
+                      }
+                    ],
+                    "id": 65,
+                    "name": "VariableDeclaration",
+                    "src": "1123:7:0"
+                  }
+                ],
+                "id": 66,
+                "name": "ParameterList",
+                "src": "1122:9:0"
+              },
+              {
+                "children": [
+                  {
+                    "attributes": {
+                      "functionReturnParameters": 66
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "argumentTypes": null,
+                          "isConstant": false,
+                          "isLValue": true,
+                          "isPure": false,
+                          "lValueRequested": false,
+                          "operator": "++",
+                          "prefix": false,
+                          "type": "address",
+                          "member_name": "playerOneRed",
+                          "referencedDeclaration": 13
+                        },
+                        "children": [
+                          {
+                            "attributes": {
+                              "argumentTypes": null,
+                              "overloadedDeclarations": [
+                                null
+                              ],
+                              "referencedDeclaration": 30,
+                              "type": "struct ConnectFour.GameState storage ref",
+                              "value": "nextID",
+                              "isConstant": false,
+                              "isLValue": true,
+                              "isPure": false,
+                              "lValueRequested": false
+                            },
+                            "id": 69,
+                            "name": "IndexAccess",
+                            "src": "1144:13:0",
+                            "children": [
+                              {
+                                "attributes": {
+                                  "argumentTypes": null,
+                                  "overloadedDeclarations": [
+                                    null
+                                  ],
+                                  "referencedDeclaration": 34,
+                                  "type": "mapping(uint256 => struct ConnectFour.GameState storage ref)",
+                                  "value": "games"
+                                },
+                                "id": 67,
+                                "name": "Identifier",
+                                "src": "1144:5:0"
+                              },
+                              {
+                                "attributes": {
+                                  "argumentTypes": null,
+                                  "overloadedDeclarations": [
+                                    null
+                                  ],
+                                  "referencedDeclaration": 62,
+                                  "type": "uint256",
+                                  "value": "gameId"
+                                },
+                                "id": 68,
+                                "name": "Identifier",
+                                "src": "1150:6:0"
+                              }
+                            ]
+                          }
+                        ],
+                        "id": 70,
+                        "name": "MemberAccess",
+                        "src": "1144:26:0"
+                      }
+                    ],
+                    "id": 71,
+                    "name": "Return",
+                    "src": "1137:33:0"
+                  }
+                ],
+                "id": 72,
+                "name": "Block",
+                "src": "1131:44:0"
+              }
+            ],
+            "id": 73,
+            "name": "FunctionDefinition",
+            "src": "1064:111:0"
+          },
+          {
+            "attributes": {
+              "constant": true,
+              "implemented": true,
+              "isConstructor": false,
+              "modifiers": [
+                null
+              ],
+              "name": "getPlayerTwo",
+              "payable": false,
+              "scope": 180,
+              "stateMutability": "view",
+              "superFunction": null,
+              "visibility": "public"
+            },
+            "children": [
+              {
+                "attributes": {
+                  "parameters": [
+                    null
+                  ]
+                },
+                "children": [
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "name": "gameId",
+                      "scope": 86,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "uint256",
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "uint",
+                          "type": "uint256"
+                        },
+                        "id": 74,
+                        "name": "ElementaryTypeName",
+                        "src": "1201:4:0"
+                      }
+                    ],
+                    "id": 75,
+                    "name": "VariableDeclaration",
+                    "src": "1201:11:0"
+                  }
+                ],
+                "id": 76,
+                "name": "ParameterList",
+                "src": "1200:13:0"
+              },
+              {
+                "attributes": {
+                  "parameters": [
+                    null
+                  ]
+                },
+                "children": [
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "name": "",
+                      "scope": 86,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "address",
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "address",
+                          "type": "address"
+                        },
+                        "id": 77,
+                        "name": "ElementaryTypeName",
+                        "src": "1238:7:0"
+                      }
+                    ],
+                    "id": 78,
+                    "name": "VariableDeclaration",
+                    "src": "1238:7:0"
+                  }
+                ],
+                "id": 79,
+                "name": "ParameterList",
+                "src": "1237:9:0"
+              },
+              {
+                "attributes": {
+                  "statements": [
+                    null
+                  ]
+                },
+                "children": [
+                  {
+                    "attributes": {
+                      "functionReturnParameters": 79
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "argumentTypes": null,
+                          "isConstant": false,
+                          "isLValue": true,
+                          "isPure": false,
+                          "lValueRequested": false,
+                          "member_name": "playerTwoBlack",
+                          "referencedDeclaration": 15,
+                          "type": "address"
+                        },
+                        "children": [
+                          {
+                            "attributes": {
+                              "argumentTypes": null,
+                              "isConstant": false,
+                              "isLValue": true,
+                              "isPure": false,
+                              "lValueRequested": false,
+                              "type": "struct ConnectFour.GameState storage ref"
+                            },
+                            "children": [
+                              {
+                                "attributes": {
+                                  "argumentTypes": null,
+                                  "overloadedDeclarations": [
+                                    null
+                                  ],
+                                  "referencedDeclaration": 34,
+                                  "type": "mapping(uint256 => struct ConnectFour.GameState storage ref)",
+                                  "value": "games"
+                                },
+                                "id": 80,
+                                "name": "Identifier",
+                                "src": "1259:5:0"
+                              },
+                              {
+                                "attributes": {
+                                  "argumentTypes": null,
+                                  "overloadedDeclarations": [
+                                    null
+                                  ],
+                                  "referencedDeclaration": 75,
+                                  "type": "uint256",
+                                  "value": "gameId"
+                                },
+                                "id": 81,
+                                "name": "Identifier",
+                                "src": "1265:6:0"
+                              }
+                            ],
+                            "id": 82,
+                            "name": "IndexAccess",
+                            "src": "1259:13:0"
+                          }
+                        ],
+                        "id": 83,
+                        "name": "MemberAccess",
+                        "src": "1259:28:0"
+                      }
+                    ],
+                    "id": 84,
+                    "name": "Return",
+                    "src": "1252:35:0"
+                  }
+                ],
+                "id": 85,
+                "name": "Block",
+                "src": "1246:46:0"
+              }
+            ],
+            "id": 86,
+            "name": "FunctionDefinition",
+            "src": "1179:113:0"
+          },
+          {
+            "attributes": {
+              "constant": true,
+              "implemented": true,
+              "isConstructor": false,
+              "modifiers": [
+                null
+              ],
+              "name": "getBoard",
+              "payable": false,
+              "scope": 180,
+              "stateMutability": "view",
+              "superFunction": null,
+              "visibility": "public"
+            },
+            "children": [
+              {
+                "children": [
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "name": "gameId",
+                      "scope": 101,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "uint256",
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "uint",
+                          "type": "uint256"
+                        },
+                        "id": 87,
+                        "name": "ElementaryTypeName",
+                        "src": "1314:4:0"
+                      }
+                    ],
+                    "id": 88,
+                    "name": "VariableDeclaration",
+                    "src": "1314:11:0"
+                  }
+                ],
+                "id": 89,
+                "name": "ParameterList",
+                "src": "1313:13:0"
+              },
+              {
+                "children": [
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "name": "",
+                      "scope": 101,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "enum ConnectFour.BoardPiece[42] memory",
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "type": "enum ConnectFour.BoardPiece[42] storage pointer"
+                        },
+                        "children": [
+                          {
+                            "attributes": {
+                              "contractScope": null,
+                              "name": "BoardPiece",
+                              "referencedDeclaration": 7,
+                              "type": "enum ConnectFour.BoardPiece"
+                            },
+                            "id": 90,
+                            "name": "UserDefinedTypeName",
+                            "src": "1351:10:0"
+                          },
+                          {
+                            "attributes": {
+                              "argumentTypes": null,
+                              "hexvalue": "3432",
+                              "isConstant": false,
+                              "isLValue": false,
+                              "isPure": false,
+                              "lValueRequested": false,
+                              "subdenomination": null,
+                              "token": "number",
+                              "type": "int_const 42",
+                              "value": "42"
+                            },
+                            "id": 91,
+                            "name": "Literal",
+                            "src": "1362:2:0"
+                          }
+                        ],
+                        "id": 92,
+                        "name": "ArrayTypeName",
+                        "src": "1351:14:0"
+                      }
+                    ],
+                    "id": 93,
+                    "name": "VariableDeclaration",
+                    "src": "1351:14:0"
+                  }
+                ],
+                "id": 94,
+                "name": "ParameterList",
+                "src": "1350:16:0"
+              },
+              {
+                "children": [
+                  {
+                    "attributes": {
+                      "functionReturnParameters": 94
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "argumentTypes": null,
+                          "isConstant": false,
+                          "isLValue": true,
+                          "isPure": false,
+                          "lValueRequested": false,
+                          "member_name": "board",
+                          "referencedDeclaration": 19,
+                          "type": "enum ConnectFour.BoardPiece[42] storage ref"
+                        },
+                        "children": [
+                          {
+                            "attributes": {
+                              "argumentTypes": null,
+                              "isConstant": false,
+                              "isLValue": true,
+                              "isPure": false,
+                              "lValueRequested": false,
+                              "type": "struct ConnectFour.GameState storage ref"
+                            },
+                            "children": [
+                              {
+                                "attributes": {
+                                  "argumentTypes": null,
+                                  "overloadedDeclarations": [
+                                    null
+                                  ],
+                                  "referencedDeclaration": 34,
+                                  "type": "mapping(uint256 => struct ConnectFour.GameState storage ref)",
+                                  "value": "games"
+                                },
+                                "id": 95,
+                                "name": "Identifier",
+                                "src": "1379:5:0"
+                              },
+                              {
+                                "attributes": {
+                                  "argumentTypes": null,
+                                  "overloadedDeclarations": [
+                                    null
+                                  ],
+                                  "referencedDeclaration": 88,
+                                  "type": "uint256",
+                                  "value": "gameId"
+                                },
+                                "id": 96,
+                                "name": "Identifier",
+                                "src": "1385:6:0"
+                              }
+                            ],
+                            "id": 97,
+                            "name": "IndexAccess",
+                            "src": "1379:13:0"
+                          }
+                        ],
+                        "id": 98,
+                        "name": "MemberAccess",
+                        "src": "1379:19:0"
+                      }
+                    ],
+                    "id": 99,
+                    "name": "Return",
+                    "src": "1372:26:0"
+                  }
+                ],
+                "id": 100,
+                "name": "Block",
+                "src": "1366:37:0"
+              }
+            ],
+            "id": 101,
+            "name": "FunctionDefinition",
+            "src": "1296:107:0"
+          },
+          {
+            "attributes": {
+              "constant": true,
+              "implemented": true,
+              "isConstructor": false,
+              "modifiers": [
+                null
+              ],
+              "name": "getWhoseTurn",
+              "payable": false,
+              "scope": 180,
+              "stateMutability": "view",
+              "superFunction": null,
+              "visibility": "public"
+            },
+            "children": [
+              {
+                "children": [
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "name": "gameId",
+                      "scope": 114,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "uint256",
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "uint",
+                          "type": "uint256"
+                        },
+                        "id": 102,
+                        "name": "ElementaryTypeName",
+                        "src": "1429:4:0"
+                      }
+                    ],
+                    "id": 103,
+                    "name": "VariableDeclaration",
+                    "src": "1429:11:0"
+                  }
+                ],
+                "id": 104,
+                "name": "ParameterList",
+                "src": "1428:13:0"
+              },
+              {
+                "children": [
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "name": "",
+                      "scope": 114,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "enum ConnectFour.BoardPiece",
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "contractScope": null,
+                          "name": "BoardPiece",
+                          "referencedDeclaration": 7,
+                          "type": "enum ConnectFour.BoardPiece"
+                        },
+                        "id": 105,
+                        "name": "UserDefinedTypeName",
+                        "src": "1466:10:0"
+                      }
+                    ],
+                    "id": 106,
+                    "name": "VariableDeclaration",
+                    "src": "1466:10:0"
+                  }
+                ],
+                "id": 107,
+                "name": "ParameterList",
+                "src": "1465:12:0"
+              },
+              {
+                "children": [
+                  {
+                    "attributes": {
+                      "functionReturnParameters": 107
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "argumentTypes": null,
+                          "isConstant": false,
+                          "isLValue": true,
+                          "isPure": false,
+                          "lValueRequested": false,
+                          "member_name": "whoseTurn",
+                          "referencedDeclaration": 21,
+                          "type": "enum ConnectFour.BoardPiece"
+                        },
+                        "children": [
+                          {
+                            "attributes": {
+                              "argumentTypes": null,
+                              "isConstant": false,
+                              "isLValue": true,
+                              "isPure": false,
+                              "lValueRequested": false,
+                              "type": "struct ConnectFour.GameState storage ref"
+                            },
+                            "children": [
+                              {
+                                "attributes": {
+                                  "argumentTypes": null,
+                                  "overloadedDeclarations": [
+                                    null
+                                  ],
+                                  "referencedDeclaration": 34,
+                                  "type": "mapping(uint256 => struct ConnectFour.GameState storage ref)",
+                                  "value": "games"
+                                },
+                                "id": 108,
+                                "name": "Identifier",
+                                "src": "1490:5:0"
+                              },
+                              {
+                                "attributes": {
+                                  "argumentTypes": null,
+                                  "overloadedDeclarations": [
+                                    null
+                                  ],
+                                  "referencedDeclaration": 103,
+                                  "type": "uint256",
+                                  "value": "gameId"
+                                },
+                                "id": 109,
+                                "name": "Identifier",
+                                "src": "1496:6:0"
+                              }
+                            ],
+                            "id": 110,
+                            "name": "IndexAccess",
+                            "src": "1490:13:0"
+                          }
+                        ],
+                        "id": 111,
+                        "name": "MemberAccess",
+                        "src": "1490:23:0"
+                      }
+                    ],
+                    "id": 112,
+                    "name": "Return",
+                    "src": "1483:30:0"
+                  }
+                ],
+                "id": 113,
+                "name": "Block",
+                "src": "1477:41:0"
+              }
+            ],
+            "id": 114,
+            "name": "FunctionDefinition",
+            "src": "1407:111:0"
+          },
+          {
+            "attributes": {
+              "constant": true,
+              "implemented": true,
+              "isConstructor": false,
+              "modifiers": [
+                null
+              ],
+              "name": "getRestricted",
+              "payable": false,
+              "scope": 180,
+              "stateMutability": "view",
+              "superFunction": null,
+              "visibility": "public"
+            },
+            "children": [
+              {
+                "children": [
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "name": "gameId",
+                      "scope": 127,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "uint256",
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "uint",
+                          "type": "uint256"
+                        },
+                        "id": 115,
+                        "name": "ElementaryTypeName",
+                        "src": "1545:4:0"
+                      }
+                    ],
+                    "id": 116,
+                    "name": "VariableDeclaration",
+                    "src": "1545:11:0"
+                  }
+                ],
+                "id": 117,
+                "name": "ParameterList",
+                "src": "1544:13:0"
+              },
+              {
+                "children": [
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "name": "",
+                      "scope": 127,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "bool",
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "bool",
+                          "type": "bool"
+                        },
+                        "id": 118,
+                        "name": "ElementaryTypeName",
+                        "src": "1582:4:0"
+                      }
+                    ],
+                    "id": 119,
+                    "name": "VariableDeclaration",
+                    "src": "1582:4:0"
+                  }
+                ],
+                "id": 120,
+                "name": "ParameterList",
+                "src": "1581:6:0"
+              },
+              {
+                "children": [
+                  {
+                    "attributes": {
+                      "functionReturnParameters": 120
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "argumentTypes": null,
+                          "isConstant": false,
+                          "isLValue": true,
+                          "isPure": false,
+                          "lValueRequested": false,
+                          "member_name": "restricted",
+                          "referencedDeclaration": 23,
+                          "type": "bool"
+                        },
+                        "children": [
+                          {
+                            "attributes": {
+                              "argumentTypes": null,
+                              "isConstant": false,
+                              "isLValue": true,
+                              "isPure": false,
+                              "lValueRequested": false,
+                              "type": "struct ConnectFour.GameState storage ref"
+                            },
+                            "children": [
+                              {
+                                "attributes": {
+                                  "argumentTypes": null,
+                                  "overloadedDeclarations": [
+                                    null
+                                  ],
+                                  "referencedDeclaration": 34,
+                                  "type": "mapping(uint256 => struct ConnectFour.GameState storage ref)",
+                                  "value": "games"
+                                },
+                                "id": 121,
+                                "name": "Identifier",
+                                "src": "1600:5:0"
+                              },
+                              {
+                                "attributes": {
+                                  "argumentTypes": null,
+                                  "overloadedDeclarations": [
+                                    null
+                                  ],
+                                  "referencedDeclaration": 116,
+                                  "type": "uint256",
+                                  "value": "gameId"
+                                },
+                                "id": 122,
+                                "name": "Identifier",
+                                "src": "1606:6:0"
+                              }
+                            ],
+                            "id": 123,
+                            "name": "IndexAccess",
+                            "src": "1600:13:0"
+                          }
+                        ],
+                        "id": 124,
+                        "name": "MemberAccess",
+                        "src": "1600:24:0"
+                      }
+                    ],
+                    "id": 125,
+                    "name": "Return",
+                    "src": "1593:31:0"
+                  }
+                ],
+                "id": 126,
+                "name": "Block",
+                "src": "1587:42:0"
+              }
+            ],
+            "id": 127,
+            "name": "FunctionDefinition",
+            "src": "1522:107:0"
+          },
+          {
+            "attributes": {
+              "constant": true,
+              "implemented": true,
+              "isConstructor": false,
+              "modifiers": [
+                null
+              ],
+              "name": "getIsStarted",
+              "payable": false,
+              "scope": 180,
+              "stateMutability": "view",
+              "superFunction": null,
+              "visibility": "public"
+            },
+            "children": [
+              {
+                "children": [
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "name": "gameId",
+                      "scope": 140,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "uint256",
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "uint",
+                          "type": "uint256"
+                        },
+                        "id": 128,
+                        "name": "ElementaryTypeName",
+                        "src": "1655:4:0"
+                      }
+                    ],
+                    "id": 129,
+                    "name": "VariableDeclaration",
+                    "src": "1655:11:0"
+                  }
+                ],
+                "id": 130,
+                "name": "ParameterList",
+                "src": "1654:13:0"
+              },
+              {
+                "children": [
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "name": "",
+                      "scope": 140,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "bool",
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "bool",
+                          "type": "bool"
+                        },
+                        "id": 131,
+                        "name": "ElementaryTypeName",
+                        "src": "1692:4:0"
+                      }
+                    ],
+                    "id": 132,
+                    "name": "VariableDeclaration",
+                    "src": "1692:4:0"
+                  }
+                ],
+                "id": 133,
+                "name": "ParameterList",
+                "src": "1691:6:0"
+              },
+              {
+                "children": [
+                  {
+                    "attributes": {
+                      "functionReturnParameters": 133
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "argumentTypes": null,
+                          "isConstant": false,
+                          "isLValue": true,
+                          "isPure": false,
+                          "lValueRequested": false,
+                          "member_name": "isStarted",
+                          "referencedDeclaration": 25,
+                          "type": "bool"
+                        },
+                        "children": [
+                          {
+                            "attributes": {
+                              "argumentTypes": null,
+                              "isConstant": false,
+                              "isLValue": true,
+                              "isPure": false,
+                              "lValueRequested": false,
+                              "type": "struct ConnectFour.GameState storage ref"
+                            },
+                            "children": [
+                              {
+                                "attributes": {
+                                  "argumentTypes": null,
+                                  "overloadedDeclarations": [
+                                    null
+                                  ],
+                                  "referencedDeclaration": 34,
+                                  "type": "mapping(uint256 => struct ConnectFour.GameState storage ref)",
+                                  "value": "games"
+                                },
+                                "id": 134,
+                                "name": "Identifier",
+                                "src": "1710:5:0"
+                              },
+                              {
+                                "attributes": {
+                                  "argumentTypes": null,
+                                  "overloadedDeclarations": [
+                                    null
+                                  ],
+                                  "referencedDeclaration": 129,
+                                  "type": "uint256",
+                                  "value": "gameId"
+                                },
+                                "id": 135,
+                                "name": "Identifier",
+                                "src": "1716:6:0"
+                              }
+                            ],
+                            "id": 136,
+                            "name": "IndexAccess",
+                            "src": "1710:13:0"
+                          }
+                        ],
+                        "id": 137,
+                        "name": "MemberAccess",
+                        "src": "1710:23:0"
+                      }
+                    ],
+                    "id": 138,
+                    "name": "Return",
+                    "src": "1703:30:0"
+                  }
+                ],
+                "id": 139,
+                "name": "Block",
+                "src": "1697:41:0"
+              }
+            ],
+            "id": 140,
+            "name": "FunctionDefinition",
+            "src": "1633:105:0"
+          },
+          {
+            "attributes": {
+              "constant": true,
+              "implemented": true,
+              "isConstructor": false,
+              "modifiers": [
+                null
+              ],
+              "name": "getGameOver",
+              "payable": false,
+              "scope": 180,
+              "stateMutability": "view",
+              "superFunction": null,
+              "visibility": "public"
+            },
+            "children": [
+              {
+                "children": [
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "name": "gameId",
+                      "scope": 153,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "uint256",
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "uint",
+                          "type": "uint256"
+                        },
+                        "id": 141,
+                        "name": "ElementaryTypeName",
+                        "src": "1763:4:0"
+                      }
+                    ],
+                    "id": 142,
+                    "name": "VariableDeclaration",
+                    "src": "1763:11:0"
+                  }
+                ],
+                "id": 143,
+                "name": "ParameterList",
+                "src": "1762:13:0"
+              },
+              {
+                "children": [
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "name": "",
+                      "scope": 153,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "bool",
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "bool",
+                          "type": "bool"
+                        },
+                        "id": 144,
+                        "name": "ElementaryTypeName",
+                        "src": "1800:4:0"
+                      }
+                    ],
+                    "id": 145,
+                    "name": "VariableDeclaration",
+                    "src": "1800:4:0"
+                  }
+                ],
+                "id": 146,
+                "name": "ParameterList",
+                "src": "1799:6:0"
+              },
+              {
+                "children": [
+                  {
+                    "attributes": {
+                      "functionReturnParameters": 146
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "argumentTypes": null,
+                          "isConstant": false,
+                          "isLValue": true,
+                          "isPure": false,
+                          "lValueRequested": false,
+                          "member_name": "gameOver",
+                          "referencedDeclaration": 27,
+                          "type": "bool"
+                        },
+                        "children": [
+                          {
+                            "attributes": {
+                              "argumentTypes": null,
+                              "isConstant": false,
+                              "isLValue": true,
+                              "isPure": false,
+                              "lValueRequested": false,
+                              "type": "struct ConnectFour.GameState storage ref"
+                            },
+                            "children": [
+                              {
+                                "attributes": {
+                                  "argumentTypes": null,
+                                  "overloadedDeclarations": [
+                                    null
+                                  ],
+                                  "referencedDeclaration": 34,
+                                  "type": "mapping(uint256 => struct ConnectFour.GameState storage ref)",
+                                  "value": "games"
+                                },
+                                "id": 147,
+                                "name": "Identifier",
+                                "src": "1818:5:0"
+                              },
+                              {
+                                "attributes": {
+                                  "argumentTypes": null,
+                                  "overloadedDeclarations": [
+                                    null
+                                  ],
+                                  "referencedDeclaration": 142,
+                                  "type": "uint256",
+                                  "value": "gameId"
+                                },
+                                "id": 148,
+                                "name": "Identifier",
+                                "src": "1824:6:0"
+                              }
+                            ],
+                            "id": 149,
+                            "name": "IndexAccess",
+                            "src": "1818:13:0"
+                          }
+                        ],
+                        "id": 150,
+                        "name": "MemberAccess",
+                        "src": "1818:22:0"
+                      }
+                    ],
+                    "id": 151,
+                    "name": "Return",
+                    "src": "1811:29:0"
+                  }
+                ],
+                "id": 152,
+                "name": "Block",
+                "src": "1805:40:0"
+              }
+            ],
+            "id": 153,
+            "name": "FunctionDefinition",
+            "src": "1742:103:0"
+          },
+          {
+            "attributes": {
+              "constant": false,
+              "implemented": true,
+              "isConstructor": false,
+              "modifiers": [
+                null
+              ],
+              "name": "createUniqueId",
+              "payable": false,
+              "scope": 180,
+              "stateMutability": "nonpayable",
+              "superFunction": null,
+              "visibility": "internal"
+            },
+            "children": [
+              {
+                "attributes": {
+                  "parameters": [
+                    null
+                  ]
+                },
+                "children": [],
+                "id": 154,
+                "name": "ParameterList",
+                "src": "1872:2:0"
+              },
+              {
+                "children": [
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "name": "",
+                      "scope": 162,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "uint256",
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "uint",
+                          "type": "uint256"
+                        },
+                        "id": 155,
+                        "name": "ElementaryTypeName",
+                        "src": "1892:4:0"
+                      }
+                    ],
+                    "id": 156,
+                    "name": "VariableDeclaration",
+                    "src": "1892:4:0"
+                  }
+                ],
+                "id": 157,
+                "name": "ParameterList",
+                "src": "1891:6:0"
+              },
+              {
+                "children": [
+                  {
+                    "attributes": {
+                      "functionReturnParameters": 157
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "argumentTypes": null,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": false,
+                          "lValueRequested": false,
+                          "operator": "++",
+                          "prefix": false,
+                          "type": "uint256"
+                        },
+                        "children": [
+                          {
+                            "attributes": {
+                              "argumentTypes": null,
+                              "overloadedDeclarations": [
+                                null
+                              ],
+                              "referencedDeclaration": 30,
+                              "type": "uint256",
+                              "value": "nextID"
+                            },
+                            "id": 158,
+                            "name": "Identifier",
+                            "src": "1911:6:0"
+                          }
+                        ],
+                        "id": 159,
+                        "name": "UnaryOperation",
+                        "src": "1911:8:0"
+                      }
+                    ],
+                    "id": 160,
+                    "name": "Return",
+                    "src": "1904:15:0"
+                  }
+                ],
+                "id": 161,
+                "name": "Block",
+                "src": "1898:26:0"
+              }
+            ],
+            "id": 162,
+            "name": "FunctionDefinition",
+            "src": "1849:75:0"
+          },
+          {
+            "attributes": {
+              "constant": false,
+              "implemented": true,
+              "isConstructor": false,
+              "modifiers": [
+                null
+              ],
+              "name": "createNewGame",
+              "payable": true,
+              "scope": 180,
+              "stateMutability": "payable",
+              "superFunction": null,
+              "visibility": "external"
+            },
+            "children": [
+              {
+                "attributes": {
+                  "parameters": [
+                    null
+                  ]
+                },
+                "children": [],
+                "id": 163,
+                "name": "ParameterList",
+                "src": "1950:2:0"
+              },
+              {
+                "attributes": {
+                  "parameters": [
+                    null
+                  ]
+                },
+                "children": [],
+                "id": 164,
+                "name": "ParameterList",
+                "src": "1970:0:0"
+              },
+              {
+                "children": [
+                  {
+                    "attributes": {
+                      "assignments": [
+                        166
+                      ]
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "constant": false,
+                          "name": "id",
+                          "scope": 179,
+                          "stateVariable": false,
+                          "storageLocation": "default",
+                          "type": "uint256",
+                          "value": null,
+                          "visibility": "internal"
+                        },
+                        "children": [
+                          {
+                            "attributes": {
+                              "name": "uint",
+                              "type": "uint256"
+                            },
+                            "id": 165,
+                            "name": "ElementaryTypeName",
+                            "src": "1976:4:0"
+                          }
+                        ],
+                        "id": 166,
+                        "name": "VariableDeclaration",
+                        "src": "1976:7:0"
+                      },
+                      {
+                        "attributes": {
+                          "argumentTypes": null,
+                          "arguments": [
+                            null
+                          ],
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": false,
+                          "isStructConstructorCall": false,
+                          "lValueRequested": false,
+                          "names": [
+                            null
+                          ],
+                          "type": "uint256",
+                          "type_conversion": false
+                        },
+                        "children": [
+                          {
+                            "attributes": {
+                              "argumentTypes": [
+                                null
+                              ],
+                              "overloadedDeclarations": [
+                                null
+                              ],
+                              "referencedDeclaration": 162,
+                              "type": "function () returns (uint256)",
+                              "value": "createUniqueId"
+                            },
+                            "id": 167,
+                            "name": "Identifier",
+                            "src": "1986:14:0"
+                          }
+                        ],
+                        "id": 168,
+                        "name": "FunctionCall",
+                        "src": "1986:16:0"
+                      }
+                    ],
+                    "id": 169,
+                    "name": "VariableDeclarationStatement",
+                    "src": "1976:26:0"
+                  },
+                  {
+                    "children": [
+                      {
+                        "attributes": {
+                          "argumentTypes": null,
+                          "isConstant": false,
+                          "isLValue": false,
+                          "isPure": false,
+                          "lValueRequested": false,
+                          "operator": "=",
+                          "type": "uint256"
+                        },
+                        "children": [
+                          {
+                            "attributes": {
+                              "argumentTypes": null,
+                              "isConstant": false,
+                              "isLValue": true,
+                              "isPure": false,
+                              "lValueRequested": true,
+                              "member_name": "bid",
+                              "referencedDeclaration": 9,
+                              "type": "uint256"
+                            },
+                            "children": [
+                              {
+                                "attributes": {
+                                  "argumentTypes": null,
+                                  "isConstant": false,
+                                  "isLValue": true,
+                                  "isPure": false,
+                                  "lValueRequested": false,
+                                  "type": "struct ConnectFour.GameState storage ref"
+                                },
+                                "children": [
+                                  {
+                                    "attributes": {
+                                      "argumentTypes": null,
+                                      "overloadedDeclarations": [
+                                        null
+                                      ],
+                                      "referencedDeclaration": 34,
+                                      "type": "mapping(uint256 => struct ConnectFour.GameState storage ref)",
+                                      "value": "games"
+                                    },
+                                    "id": 170,
+                                    "name": "Identifier",
+                                    "src": "2008:5:0"
+                                  },
+                                  {
+                                    "attributes": {
+                                      "argumentTypes": null,
+                                      "overloadedDeclarations": [
+                                        null
+                                      ],
+                                      "referencedDeclaration": 166,
+                                      "type": "uint256",
+                                      "value": "id"
+                                    },
+                                    "id": 171,
+                                    "name": "Identifier",
+                                    "src": "2014:2:0"
+                                  }
+                                ],
+                                "id": 172,
+                                "name": "IndexAccess",
+                                "src": "2008:9:0"
+                              }
+                            ],
+                            "id": 173,
+                            "name": "MemberAccess",
+                            "src": "2008:13:0"
+                          },
+                          {
+                            "attributes": {
+                              "argumentTypes": null,
+                              "isConstant": false,
+                              "isLValue": false,
+                              "isPure": false,
+                              "lValueRequested": false,
+                              "member_name": "value",
+                              "referencedDeclaration": null,
+                              "type": "uint256"
+                            },
+                            "children": [
+                              {
+                                "attributes": {
+                                  "argumentTypes": null,
+                                  "overloadedDeclarations": [
+                                    null
+                                  ],
+                                  "referencedDeclaration": 377,
+                                  "type": "msg",
+                                  "value": "msg"
+                                },
+                                "id": 174,
+                                "name": "Identifier",
+                                "src": "2024:3:0"
+                              }
+                            ],
+                            "id": 175,
+                            "name": "MemberAccess",
+                            "src": "2024:9:0"
+                          }
+                        ],
+                        "id": 176,
+                        "name": "Assignment",
+                        "src": "2008:25:0"
+                      }
+                    ],
+                    "id": 177,
+                    "name": "ExpressionStatement",
+                    "src": "2008:25:0"
+                  }
+                ],
+                "id": 178,
+                "name": "Block",
+                "src": "1970:68:0"
+              }
+            ],
+            "id": 179,
+            "name": "FunctionDefinition",
+            "src": "1928:110:0"
+          }
+        ],
+        "id": 180,
+        "name": "ContractDefinition",
+        "src": "205:1836:0"
+      }
+    ],
+    "id": 181,
+    "name": "SourceUnit",
+    "src": "27:2015:0"
+  },
+  "compiler": {
+    "name": "solc",
+    "version": "0.4.18+commit.9cf6e910.Emscripten.clang"
+  },
+  "networks": {},
+  "schemaVersion": "1.0.1",
+  "updatedAt": "2017-12-15T18:14:40.431Z"
+}

@@ -1,0 +1,26 @@
+{
+  "name": "connect-four",
+  "version": "1.0.0",
+  "description": "A Connect four DApp",
+  "main": "truffle-config.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "truffle test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://dmelcer9@github.com/dmelcer9/connect-four-dapp.git"
+  },
+  "author": "Daniel Melcer",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/dmelcer9/connect-four-dapp/issues"
+  },
+  "homepage": "https://github.com/dmelcer9/connect-four-dapp#readme",
+  "dependencies": {
+    "truffle": "^4.0.3",
+    "zeppelin-solidity": "^1.4.0"
+  }
+}
