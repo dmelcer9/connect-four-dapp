@@ -62,7 +62,7 @@ contract('Connect Four', function(accounts) {
     assert.equal(txResult.logs[0].event,"GameStart");
 
     var lastTimePlayed = await instance.getLastTimePlayed.call(0);
-    assert.closeTo(currentTime, lastTimePlayed.toNumber(), 1);
+    assert.closeTo(currentTime, lastTimePlayed.toNumber(), 2);
 
     var p2address = await instance.getPlayerTwo.call(0);
     assert.equal(p2address, accounts[1]);
@@ -112,10 +112,11 @@ contract('Connect Four', function(accounts) {
 
     var txResult = await instance.joinGame(1,{from:accounts[1],value:payment});
     var currentTime = Date.now()/1000;
+
     assert.equal(txResult.logs[0].event,"GameStart");
 
     var lastTimePlayed = await instance.getLastTimePlayed.call(1);
-    assert.closeTo(currentTime, lastTimePlayed.toNumber(), 1);
+    assert.closeTo(currentTime, lastTimePlayed.toNumber(), 2);
 
     var p2address = await instance.getPlayerTwo.call(1);
     assert.equal(p2address, accounts[1]);

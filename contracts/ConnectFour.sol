@@ -1,4 +1,4 @@
-//pragma solidity ^0.4.14
+pragma solidity ^0.4.18;
 
 import '../node_modules/zeppelin-solidity/contracts/payment/PullPayment.sol';
 //function asyncSend(address dest, uint256 amount) internal;
