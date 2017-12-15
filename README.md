@@ -1,4 +1,6 @@
 A Connect Four Dapp
 =
 
-WIP
+Play connect four on the ethereum blockchain!
+
+Winnings are enforced by smart contract. Not making a move for a certain amount of time is considered a forfeit.
