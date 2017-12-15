@@ -73,21 +73,51 @@ contract ConnectFour is PullPayment {
     return games[gameId].gameOver;
   }
 
-  function createUniqueId() internal returns(uint) {
+  function createUniqueId() private returns(uint) {
     return nextID++;
   }
 
+  function _createNewGame(uint gameId) private{
+    games[gameId].bid = msg.value;
+    games[gameId].playerOneRed = msg.sender;
+    GameCreated(gameId, false);
+  }
+
   function createNewGame() external payable {
-    uint id = createUniqueId();
-    games[id].bid = msg.value;
-    games[id].playerOneRed = msg.sender;
-    GameCreated(id, false);
+    uint gameId = createUniqueId();
+    _createNewGame(gameId);
+  }
+
+
+  function createNewRestrictedGame(address playerTwo) external payable {
+    require(playerTwo != msg.sender);
+    uint gameId = createUniqueId();
+    games[gameId].restricted = true;
+    games[gameId].playerTwoBlack = playerTwo;
+    _createNewGame(gameId);
+  }
+
+  function _joinGame(uint gameId) private {
+    require(getPlayerOne(gameId) != 0);
+    require(getPlayerOne(gameId) != msg.sender);
+    require(msg.value == getBid(gameId));
+
+    games[gameId].lastTimePlayed = now;
+    games[gameId].isStarted = true;
+    games[gameId].whoseTurn = BoardPiece.RED;
+    GameStart(gameId);
   }
 
   function joinGame(uint gameId) external payable {
-    require(getPlayerOne(gameId) != 0);
-    require(getPlayerOne(gameId) != msg.sender);
+    if(getRestricted(gameId)){
+      require(games[gameId].playerTwoBlack == msg.sender);
+    } else {
+      games[gameId].playerTwoBlack = msg.sender;
+    }
+
+    _joinGame(gameId);
   }
+
 
 
 }
