@@ -19,6 +19,11 @@ const assertWillRevert = async function(toRevert){
 
 contract('Connect Four', function(accounts) {
 
+  it('should deny joining a nonexistent game', async function(){
+    var instance = await ConnectFour.deployed();
+    await assertWillRevert(()=>instance.joinGame(0));
+  })
+
   it('should create a new game', async function(){
     var c4inst = await ConnectFour.deployed();
 

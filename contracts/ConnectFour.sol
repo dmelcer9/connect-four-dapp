@@ -37,6 +37,11 @@ contract ConnectFour is PullPayment {
 
   mapping (uint => GameState) games;
 
+  modifier onlyGameExists(uint gameId){
+    require(games[gameId].playerOneRed != 0);
+    _;
+  }
+
   modifier onlyWhileNotStarted(uint gameId){
     require(!games[gameId].isStarted);
     _;
@@ -127,8 +132,8 @@ contract ConnectFour is PullPayment {
   }
 
   function joinGame(uint gameId) external payable
+  onlyGameExists(gameId)
   onlyWhileNotStarted(gameId) {
-    require(getPlayerOne(gameId) != 0);
     require(getPlayerOne(gameId) != msg.sender);
     require(msg.value == getBid(gameId));
 
