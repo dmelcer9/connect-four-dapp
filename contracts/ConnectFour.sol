@@ -28,9 +28,10 @@ contract ConnectFour is PullPayment {
     bool gameOver;
   }
 
-  event GameCreated(uint gameId, bool restricted);
-  event GameStart(uint gameId);
-  event MoveMade(uint gameId, BoardPiece who, uint8 position);
+  event logGameCreated(uint gameId, bool restricted);
+  event logGameStart(uint gameId);
+  event logMoveMade(uint gameId, BoardPiece who, uint8 position);
+  event logGameEnd(uint gameId, address winner);
 
 
   uint nextID;
@@ -115,7 +116,7 @@ contract ConnectFour is PullPayment {
   function _createNewGame(uint gameId) private{
     games[gameId].bid = msg.value;
     games[gameId].playerOneRed = msg.sender;
-    GameCreated(gameId, false);
+    logGameCreated(gameId, false);
   }
 
   function createNewGame() external payable {
@@ -146,9 +147,29 @@ contract ConnectFour is PullPayment {
     games[gameId].lastTimePlayed = now;
     games[gameId].isStarted = true;
     games[gameId].whoseTurn = BoardPiece.RED;
-    GameStart(gameId);
+    logGameStart(gameId);
   }
 
+  function gameEnd(uint gameId, address winner) private {
+    games[gameId].gameOver = true;
+    uint256 payout = games[gameId].bid * 2;
 
+    asyncSend(winner, payout);
+
+    logGameEnd(gameId, winner);
+  }
+
+  function forfeit(uint gameId) external
+  onlyWhilePlaying(gameId)
+  onlyPlayers(gameId){
+    if(msg.sender == games[gameId].playerOneRed){
+      gameEnd(gameId, games[gameId].playerTwoBlack);
+    } else if(msg.sender == games[gameId].playerTwoBlack){
+      gameEnd(gameId, games[gameId].playerOneRed);
+    } else{
+      //This should never happen
+      revert();
+    }
+  }
 
 }
