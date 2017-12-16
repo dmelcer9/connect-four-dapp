@@ -74,6 +74,11 @@ contract('Connect Four', function(accounts) {
     assert.equal(whoseTurn.toNumber(), 1);
   })
 
+  it('should deny joining an already full game', async function(){
+    var instance = await ConnectFour.deployed();
+    await assertWillRevert(()=>instance.joinGame(0,{from:accounts[2],value:payment}));
+  })
+
   it('shouldn\'t create a game restricted to the sender', async function(){
     var instance = await ConnectFour.deployed();
     await assertWillRevert(()=>instance.createNewRestrictedGame(accounts[0]));
@@ -127,6 +132,8 @@ contract('Connect Four', function(accounts) {
     var whoseTurn = await instance.getWhoseTurn.call(1);
     assert.equal(whoseTurn.toNumber(), 1);
   })
+
+
 
 
 });
