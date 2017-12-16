@@ -37,6 +37,31 @@ contract ConnectFour is PullPayment {
 
   mapping (uint => GameState) games;
 
+  modifier onlyWhilePlaying(uint gameId){
+    require(games[gameId].isStarted && !games[gameId].gameOver);
+    _;
+  }
+
+  modifier onlyPlayers(uint gameId){
+    require(msg.sender == games[gameId].playerOneRed
+      || msg.sender == games[gameId].playerTwoBlack);
+      _;
+  }
+
+  modifier onlyActivePlayer(uint gameId){
+    BoardPiece player = games[gameId].whoseTurn;
+
+    if(player == BoardPiece.RED){
+      require(msg.sender == games[gameId].playerOneRed);
+    } else if(player == BoardPiece.BLACK){
+      require(msg.sender == games[gameId].playerTwoBlack);
+    } else{
+      revert();
+    }
+
+    _;
+  }
+
   function getBid(uint gameId) constant public returns(uint) {
     return games[gameId].bid;
   }
