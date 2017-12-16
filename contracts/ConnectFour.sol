@@ -28,14 +28,50 @@ contract ConnectFour is PullPayment {
     bool gameOver;
   }
 
-  event GameCreated(uint gameId, bool restricted);
-  event GameStart(uint gameId);
-  event MoveMade(uint gameId, BoardPiece who, uint8 position);
+  event logGameCreated(uint gameId, bool restricted);
+  event logGameStart(uint gameId);
+  event logMoveMade(uint gameId, BoardPiece who, uint8 position);
+  event logGameEnd(uint gameId, address winner);
 
 
   uint nextID;
 
   mapping (uint => GameState) games;
+
+  modifier onlyGameExists(uint gameId){
+    require(games[gameId].playerOneRed != 0);
+    _;
+  }
+
+  modifier onlyWhileNotStarted(uint gameId){
+    require(!games[gameId].isStarted);
+    _;
+  }
+
+  modifier onlyWhilePlaying(uint gameId){
+    require(games[gameId].isStarted && !games[gameId].gameOver);
+    _;
+  }
+
+  modifier onlyPlayers(uint gameId){
+    require(msg.sender == games[gameId].playerOneRed
+      || msg.sender == games[gameId].playerTwoBlack);
+      _;
+  }
+
+  modifier onlyActivePlayer(uint gameId){
+    BoardPiece player = games[gameId].whoseTurn;
+
+    if(player == BoardPiece.RED){
+      require(msg.sender == games[gameId].playerOneRed);
+    } else if(player == BoardPiece.BLACK){
+      require(msg.sender == games[gameId].playerTwoBlack);
+    } else{
+      revert();
+    }
+
+    _;
+  }
 
   function getBid(uint gameId) constant public returns(uint) {
     return games[gameId].bid;
@@ -80,7 +116,7 @@ contract ConnectFour is PullPayment {
   function _createNewGame(uint gameId) private{
     games[gameId].bid = msg.value;
     games[gameId].playerOneRed = msg.sender;
-    GameCreated(gameId, false);
+    logGameCreated(gameId, false);
   }
 
   function createNewGame() external payable {
@@ -96,8 +132,9 @@ contract ConnectFour is PullPayment {
     _createNewGame(gameId);
   }
 
-  function joinGame(uint gameId) external payable {
-    require(getPlayerOne(gameId) != 0);
+  function joinGame(uint gameId) external payable
+  onlyGameExists(gameId)
+  onlyWhileNotStarted(gameId) {
     require(getPlayerOne(gameId) != msg.sender);
     require(msg.value == getBid(gameId));
 
@@ -110,9 +147,29 @@ contract ConnectFour is PullPayment {
     games[gameId].lastTimePlayed = now;
     games[gameId].isStarted = true;
     games[gameId].whoseTurn = BoardPiece.RED;
-    GameStart(gameId);
+    logGameStart(gameId);
   }
 
+  function gameEnd(uint gameId, address winner) private {
+    games[gameId].gameOver = true;
+    uint256 payout = games[gameId].bid * 2;
 
+    asyncSend(winner, payout);
+
+    logGameEnd(gameId, winner);
+  }
+
+  function forfeit(uint gameId) external
+  onlyWhilePlaying(gameId)
+  onlyPlayers(gameId){
+    if(msg.sender == games[gameId].playerOneRed){
+      gameEnd(gameId, games[gameId].playerTwoBlack);
+    } else if(msg.sender == games[gameId].playerTwoBlack){
+      gameEnd(gameId, games[gameId].playerOneRed);
+    } else{
+      //This should never happen
+      revert();
+    }
+  }
 
 }
