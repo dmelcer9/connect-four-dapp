@@ -20,7 +20,9 @@
   },
   "homepage": "https://github.com/dmelcer9/connect-four-dapp#readme",
   "dependencies": {
+    "moment": "^2.20.0",
     "truffle": "^4.0.3",
     "zeppelin-solidity": "^1.4.0"
-  }
+  },
+  "devDependencies": {}
 }

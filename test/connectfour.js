@@ -1,4 +1,7 @@
 const assertRevert = require('../node_modules/zeppelin-solidity/test/helpers/assertRevert');
+const moment = require('../node_modules/moment/min/moment.min');
+
+const increaseTime = require('./increaseTime');
 var ConnectFour = artifacts.require("ConnectFour");
 
 const logErrAndAssertFalse = function (error){
@@ -15,6 +18,25 @@ const assertWillRevert = async function(toRevert){
   } catch(error){
     assertRevert(error);
   }
+}
+
+const createGame = async function(c4inst, price, acc1){
+  var txResult = await c4inst.createNewGame({from:acc1,value:price});
+
+  var createEvent = txResult.logs[0];
+  assert.equal(createEvent.event,"logGameCreated");
+
+  var id = createEvent.args.gameId.toNumber();
+
+  return id;
+}
+
+const createAndJoinGame = async function(c4inst, price, acc1, acc2){
+  var id = await createGame(c4inst, price, acc1);
+
+  await c4inst.joinGame(id,{from:acc2, value:price});
+
+  return id;
 }
 
 contract('Connect Four', function(accounts) {
@@ -183,7 +205,7 @@ contract('Connect Four', function(accounts) {
     var acc1BalPost = web3.eth.getBalance(accounts[1]);
 
     assert.isTrue(acc1BalPre.eq(acc1BalPost));
-    assert.equal(acc0BalPre.add(web3.toWei(.02,"ether")).toNumber(),(acc0BalPost).toNumber());
+    assert.equal(acc0BalPre.add(web3.toWei(.02,"ether")).toNumber(),acc0BalPost.toNumber());
   })
 
   it('should not let someone forfeit an already forfeited game', async function(){
@@ -198,6 +220,42 @@ contract('Connect Four', function(accounts) {
 
     await assertWillRevert(()=>instance.forfeit(2));
   })
+
+  it('creating new game for move tests', async function(){
+    var instance = await ConnectFour.deployed();
+
+    await instance.createNewGame({value:payment});
+    await instance.joinGame(2,{from:accounts[1],value:payment});
+  })
+
+  it('should let someone claim victory if the other person has not moved in 3 days', async function(){
+
+    var instance = await ConnectFour.deployed();
+    var id = await createAndJoinGame(instance, payment, accounts[0], accounts[1]);
+
+    await increaseTime(60*60*71);
+
+    await assertWillRevert(()=>instance.claimTimeoutVictory(id,{from:accounts[1]}));
+
+    await increaseTime(60*60 + 1);
+
+    await assertWillRevert(()=>instance.claimTimeoutVictory(id,{from:accounts[0]}));
+    await assertWillRevert(()=>instance.claimTimeoutVictory(id,{from:accounts[2]}));
+
+    var acc0BalPre = web3.eth.getBalance(accounts[0]);
+    var acc1BalPre = web3.eth.getBalance(accounts[1]);
+
+    var txResult = await instance.claimTimeoutVictory(id,{from:accounts[1],gasPrice:0});
+    assert.equal(txResult.logs[0].event,"logGameEnd");
+
+    await instance.withdrawPayments({from:accounts[1],gasPrice:0});
+
+    var acc0BalPost = web3.eth.getBalance(accounts[0]);
+    var acc1BalPost = web3.eth.getBalance(accounts[1]);
+
+    assert.isTrue(acc0BalPre.eq(acc0BalPost));
+    assert.equal(acc1BalPre.add(web3.toWei(.02,"ether")).toNumber(),(acc1BalPost).toNumber());
+  });
 
 
 });

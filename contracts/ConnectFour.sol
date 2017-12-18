@@ -33,10 +33,14 @@ contract ConnectFour is PullPayment {
   event logMoveMade(uint gameId, BoardPiece who, uint8 position);
   event logGameEnd(uint gameId, address winner);
 
-
+  uint public moveTimeout;
   uint nextID;
 
   mapping (uint => GameState) games;
+
+  function ConnectFour(uint timeout) public{
+    moveTimeout = timeout;
+  }
 
   modifier onlyGameExists(uint gameId){
     require(games[gameId].playerOneRed != 0);
@@ -60,16 +64,19 @@ contract ConnectFour is PullPayment {
   }
 
   modifier onlyActivePlayer(uint gameId){
-    BoardPiece player = games[gameId].whoseTurn;
+    require(msg.sender == getActivePlayer(gameId));
 
-    if(player == BoardPiece.RED){
-      require(msg.sender == games[gameId].playerOneRed);
-    } else if(player == BoardPiece.BLACK){
-      require(msg.sender == games[gameId].playerTwoBlack);
-    } else{
-      revert();
-    }
+    _;
+  }
 
+  modifier onlyInactivePlayer(uint gameId){
+    require(msg.sender == getInactivePlayer(gameId));
+
+    _;
+  }
+
+  modifier onlyAfterTimeout(uint gameId){
+    require(now > games[gameId].lastTimePlayed + moveTimeout);
     _;
   }
 
@@ -109,9 +116,34 @@ contract ConnectFour is PullPayment {
     return games[gameId].gameOver;
   }
 
+  function getActivePlayer(uint gameId) constant internal returns(address){
+    BoardPiece player = games[gameId].whoseTurn;
+
+    if(player == BoardPiece.RED){
+      return games[gameId].playerOneRed;
+    } else if(player == BoardPiece.BLACK){
+      return games[gameId].playerTwoBlack;
+    } else{
+      revert();
+    }
+  }
+
+  function getInactivePlayer(uint gameId) constant internal returns(address){
+    BoardPiece player = games[gameId].whoseTurn;
+
+    if(player == BoardPiece.RED){
+      return games[gameId].playerTwoBlack;
+    } else if(player == BoardPiece.BLACK){
+      return games[gameId].playerOneRed;
+    } else{
+      revert();
+    }
+  }
+
   function createUniqueId() private returns(uint) {
     return nextID++;
   }
+
 
   function _createNewGame(uint gameId) private{
     games[gameId].bid = msg.value;
@@ -170,6 +202,14 @@ contract ConnectFour is PullPayment {
       //This should never happen
       revert();
     }
+  }
+
+  function claimTimeoutVictory(uint gameId) external
+  onlyAfterTimeout(gameId)
+  onlyInactivePlayer(gameId)
+  onlyWhilePlaying(gameId)
+  {
+    gameEnd(gameId, getInactivePlayer(gameId));
   }
 
 }
