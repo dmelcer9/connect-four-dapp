@@ -279,6 +279,59 @@ contract('Connect Four', function(accounts) {
     assertEvent(await instance.makeMove(id,27,{from:accounts[0]}),"logMoveMade");
     assertEvent(await instance.makeMove(id,34,{from:accounts[1]}),"logMoveMade");
     assertEvent(await instance.makeMove(id,41,{from:accounts[0]}),"logMoveMade");
+
+  })
+
+  it('should deny invalid moves', async function(){
+    var instance = await ConnectFour.deployed();
+
+
+
+    //Game ended
+    assertWillRevert(()=>instance.makeMove(0, 0));
+
+    //Game probably doesn't exist yet
+    assertWillRevert(()=>instance.makeMove(999999999,0));
+
+    var id = await createGame(instance, payment, accounts[0]);
+    assertWillRevert(()=>instance.makeMove(id,0));
+
+    id = await createAndJoinGame(instance, payment, accounts[0], accounts[1]);
+    const ac0 = {from:accounts[0]};
+    const ac1 = {from:accounts[1]};
+
+    //Invalid first moves
+    assertWillRevert(()=>instance.makeMove(id, -1, ac0));
+    assertWillRevert(()=>instance.makeMove(id, 7, ac0));
+    assertWillRevert(()=>instance.makeMove(id, 42, ac0));
+
+    //Wrong accounts
+    assertWillRevert(()=>instance.makeMove(id, 0, ac1));
+    assertWillRevert(()=>instance.makeMove(id, 0, {from:accounts[2]}));
+
+    assertEvent(await instance.makeMove(id,0,ac0),"logMoveMade");
+
+    //Already has a chip there
+    assertWillRevert(()=>instance.makeMove(id, 0, ac1));
+    assertWillRevert(()=>instance.makeMove(id, 14, ac1))
+
+    //Wrong accounts again
+    assertWillRevert(()=>instance.makeMove(id, 3, ac0));
+
+
+    //Fill board up to top
+    assertEvent(await instance.makeMove(id,6,ac1),"logMoveMade");
+    assertEvent(await instance.makeMove(id,13,ac0),"logMoveMade");
+    assertEvent(await instance.makeMove(id,20,ac1),"logMoveMade");
+    assertEvent(await instance.makeMove(id,27,ac0),"logMoveMade");
+
+    assertWillRevert(()=>instance.makeMove(id,41,ac1));
+
+    assertEvent(await instance.makeMove(id,34,ac1),"logMoveMade");
+    assertEvent(await instance.makeMove(id,41,ac0),"logMoveMade");
+    assertWillRevert(()=>instance.makeMove(id,48,ac1));
+
+
   })
 
 });

@@ -147,6 +147,14 @@ contract ConnectFour is PullPayment {
     onlyWhilePlaying(gameId)
   {
     BoardPiece player = games[gameId].whoseTurn;
+
+    require(position >= 0 && position <= 41);
+    require(games[gameId].board[position] == BoardPiece.NONE);
+
+    if (position >= 7){
+      require(games[gameId].board[position - 7] != BoardPiece.NONE);
+    }
+
     games[gameId].board[position] = player;
 
     if (player == BoardPiece.RED) {
