@@ -1,6 +1,6 @@
 pragma solidity ^0.4.18;
 
-import '../node_modules/zeppelin-solidity/contracts/payment/PullPayment.sol';
+import "../node_modules/zeppelin-solidity/contracts/payment/PullPayment.sol";
 //function asyncSend(address dest, uint256 amount) internal;
 //function withdrawPayments() public;
 
@@ -39,46 +39,123 @@ contract ConnectFour is PullPayment {
 
   mapping (uint => GameState) games;
 
-  function ConnectFour(uint timeout) public{
-    moveTimeout = timeout;
-  }
-
-  modifier onlyGameExists(uint gameId){
+  modifier onlyGameExists(uint gameId) {
     require(games[gameId].playerOneRed != 0);
     _;
   }
 
-  modifier onlyWhileNotStarted(uint gameId){
+  modifier onlyWhileNotStarted(uint gameId) {
     require(!games[gameId].isStarted);
     _;
   }
 
-  modifier onlyWhilePlaying(uint gameId){
+  modifier onlyWhilePlaying(uint gameId) {
     require(games[gameId].isStarted && !games[gameId].gameOver);
     _;
   }
 
-  modifier onlyPlayers(uint gameId){
+  modifier onlyPlayers(uint gameId) {
     require(msg.sender == games[gameId].playerOneRed
       || msg.sender == games[gameId].playerTwoBlack);
       _;
   }
 
-  modifier onlyActivePlayer(uint gameId){
+  modifier onlyActivePlayer(uint gameId) {
     require(msg.sender == getActivePlayer(gameId));
 
     _;
   }
 
-  modifier onlyInactivePlayer(uint gameId){
+  modifier onlyInactivePlayer(uint gameId) {
     require(msg.sender == getInactivePlayer(gameId));
 
     _;
   }
 
-  modifier onlyAfterTimeout(uint gameId){
+  modifier onlyAfterTimeout(uint gameId) {
     require(now > games[gameId].lastTimePlayed + moveTimeout);
     _;
+  }
+
+  function ConnectFour(uint timeout) public {
+    moveTimeout = timeout;
+  }
+
+  function() public {
+    revert();
+  }
+
+  function createNewGame() external payable {
+    uint gameId = createUniqueId();
+    createNewGameEntry(gameId);
+  }
+
+  function createNewRestrictedGame(address playerTwo) external payable {
+    require(playerTwo != msg.sender);
+    uint gameId = createUniqueId();
+    games[gameId].restricted = true;
+    games[gameId].playerTwoBlack = playerTwo;
+    createNewGameEntry(gameId);
+  }
+
+  function joinGame(uint gameId) external payable
+    onlyGameExists(gameId)
+    onlyWhileNotStarted(gameId)
+  {
+    require(getPlayerOne(gameId) != msg.sender);
+    require(msg.value == getBid(gameId));
+
+    if (getRestricted(gameId)) {
+      require(games[gameId].playerTwoBlack == msg.sender);
+    } else {
+      games[gameId].playerTwoBlack = msg.sender;
+    }
+
+    games[gameId].lastTimePlayed = now;
+    games[gameId].isStarted = true;
+    games[gameId].whoseTurn = BoardPiece.RED;
+    logGameStart(gameId);
+  }
+
+  function forfeit(uint gameId)
+    external
+    onlyWhilePlaying(gameId)
+    onlyPlayers(gameId)
+  {
+    if (msg.sender == games[gameId].playerOneRed) {
+      gameEnd(gameId, games[gameId].playerTwoBlack);
+    } else if (msg.sender == games[gameId].playerTwoBlack) {
+      gameEnd(gameId, games[gameId].playerOneRed);
+    } else {
+      //This should never happen
+      revert();
+    }
+  }
+
+  function claimTimeoutVictory(uint gameId)
+    external
+    onlyAfterTimeout(gameId)
+    onlyInactivePlayer(gameId)
+    onlyWhilePlaying(gameId)
+  {
+    gameEnd(gameId, getInactivePlayer(gameId));
+  }
+
+  function makeMove(uint gameId, uint8 position)
+    external
+    onlyActivePlayer(gameId)
+    onlyWhilePlaying(gameId)
+  {
+    BoardPiece player = games[gameId].whoseTurn;
+    games[gameId].board[position] = player;
+
+    if (player == BoardPiece.RED) {
+      games[gameId].whoseTurn = BoardPiece.BLACK;
+    } else {
+      games[gameId].whoseTurn = BoardPiece.RED;
+    }
+
+    logMoveMade(gameId, player, position);
   }
 
   function getBid(uint gameId) constant public returns(uint) {
@@ -120,11 +197,11 @@ contract ConnectFour is PullPayment {
   function getActivePlayer(uint gameId) constant internal returns(address){
     BoardPiece player = games[gameId].whoseTurn;
 
-    if(player == BoardPiece.RED){
+    if (player == BoardPiece.RED) {
       return games[gameId].playerOneRed;
-    } else if(player == BoardPiece.BLACK){
+    } else if (player == BoardPiece.BLACK) {
       return games[gameId].playerTwoBlack;
-    } else{
+    } else {
       revert();
     }
   }
@@ -132,11 +209,11 @@ contract ConnectFour is PullPayment {
   function getInactivePlayer(uint gameId) constant internal returns(address){
     BoardPiece player = games[gameId].whoseTurn;
 
-    if(player == BoardPiece.RED){
+    if (player == BoardPiece.RED) {
       return games[gameId].playerTwoBlack;
-    } else if(player == BoardPiece.BLACK){
+    } else if (player == BoardPiece.BLACK) {
       return games[gameId].playerOneRed;
-    } else{
+    } else {
       revert();
     }
   }
@@ -146,41 +223,10 @@ contract ConnectFour is PullPayment {
   }
 
 
-  function _createNewGame(uint gameId) private{
+  function createNewGameEntry(uint gameId) private{
     games[gameId].bid = msg.value;
     games[gameId].playerOneRed = msg.sender;
     logGameCreated(gameId, false);
-  }
-
-  function createNewGame() external payable {
-    uint gameId = createUniqueId();
-    _createNewGame(gameId);
-  }
-
-  function createNewRestrictedGame(address playerTwo) external payable {
-    require(playerTwo != msg.sender);
-    uint gameId = createUniqueId();
-    games[gameId].restricted = true;
-    games[gameId].playerTwoBlack = playerTwo;
-    _createNewGame(gameId);
-  }
-
-  function joinGame(uint gameId) external payable
-  onlyGameExists(gameId)
-  onlyWhileNotStarted(gameId) {
-    require(getPlayerOne(gameId) != msg.sender);
-    require(msg.value == getBid(gameId));
-
-    if(getRestricted(gameId)){
-      require(games[gameId].playerTwoBlack == msg.sender);
-    } else {
-      games[gameId].playerTwoBlack = msg.sender;
-    }
-
-    games[gameId].lastTimePlayed = now;
-    games[gameId].isStarted = true;
-    games[gameId].whoseTurn = BoardPiece.RED;
-    logGameStart(gameId);
   }
 
   function gameEnd(uint gameId, address winner) private {
@@ -192,38 +238,4 @@ contract ConnectFour is PullPayment {
     logGameEnd(gameId, winner);
   }
 
-  function forfeit(uint gameId) external
-  onlyWhilePlaying(gameId)
-  onlyPlayers(gameId){
-    if(msg.sender == games[gameId].playerOneRed){
-      gameEnd(gameId, games[gameId].playerTwoBlack);
-    } else if(msg.sender == games[gameId].playerTwoBlack){
-      gameEnd(gameId, games[gameId].playerOneRed);
-    } else{
-      //This should never happen
-      revert();
-    }
-  }
-
-  function claimTimeoutVictory(uint gameId) external
-  onlyAfterTimeout(gameId)
-  onlyInactivePlayer(gameId)
-  onlyWhilePlaying(gameId) {
-    gameEnd(gameId, getInactivePlayer(gameId));
-  }
-
-  function makeMove(uint gameId, uint8 position) external
-  onlyActivePlayer(gameId)
-  onlyWhilePlaying(gameId){
-    BoardPiece player = games[gameId].whoseTurn;
-    games[gameId].board[position] = player;
-
-    if(player == BoardPiece.RED){
-      games[gameId].whoseTurn = BoardPiece.BLACK;
-    } else{
-      games[gameId].whoseTurn = BoardPiece.RED;
-    }
-
-    logMoveMade(gameId, player, position);
-  }
 }
