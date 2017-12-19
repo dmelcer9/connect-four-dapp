@@ -1,6 +1,10 @@
 const assertRevert = require('../node_modules/zeppelin-solidity/test/helpers/assertRevert');
 const moment = require('../node_modules/moment/min/moment.min');
 
+const ethNow =  function() {
+  return web3.eth.getBlock('latest').timestamp;
+}
+
 const increaseTime = require('./increaseTime');
 var ConnectFour = artifacts.require("ConnectFour");
 
@@ -9,7 +13,12 @@ const logErrAndAssertFalse = function (error){
   assert.fail(error, "", "An error occured");
 }
 
-payment = web3.toWei(.01,"ether");
+const payment = web3.toWei(.01,"ether");
+
+
+const assertEvent = function(tx, eventName, idx = 0){
+  assert.equal(tx.logs[idx].event, eventName);
+}
 
 const assertWillRevert = async function(toRevert){
   try{
@@ -38,6 +47,7 @@ const createAndJoinGame = async function(c4inst, price, acc1, acc2){
 
   return id;
 }
+
 
 contract('Connect Four', function(accounts) {
 
@@ -91,7 +101,7 @@ contract('Connect Four', function(accounts) {
     var instance = await ConnectFour.deployed();
 
     var txResult = await instance.joinGame(0,{from:accounts[1],value:payment});
-    var currentTime = Date.now()/1000;
+    var currentTime = ethNow();
 
     assert.equal(txResult.logs[0].event,"logGameStart");
 
@@ -150,7 +160,7 @@ contract('Connect Four', function(accounts) {
     var instance = await ConnectFour.deployed();
 
     var txResult = await instance.joinGame(1,{from:accounts[1],value:payment});
-    var currentTime = Date.now()/1000;
+    var currentTime = ethNow();
 
     assert.equal(txResult.logs[0].event,"logGameStart");
 
@@ -221,19 +231,14 @@ contract('Connect Four', function(accounts) {
     await assertWillRevert(()=>instance.forfeit(2));
   })
 
-  it('creating new game for move tests', async function(){
-    var instance = await ConnectFour.deployed();
-
-    await instance.createNewGame({value:payment});
-    await instance.joinGame(2,{from:accounts[1],value:payment});
-  })
-
   it('should let someone claim victory if the other person has not moved in 3 days', async function(){
 
     var instance = await ConnectFour.deployed();
     var id = await createAndJoinGame(instance, payment, accounts[0], accounts[1]);
 
+
     await increaseTime(60*60*71);
+
 
     await assertWillRevert(()=>instance.claimTimeoutVictory(id,{from:accounts[1]}));
 
@@ -257,5 +262,23 @@ contract('Connect Four', function(accounts) {
     assert.equal(acc1BalPre.add(web3.toWei(.02,"ether")).toNumber(),(acc1BalPost).toNumber());
   });
 
+  it('should make moves when allowed', async function(){
+    var instance = await ConnectFour.deployed();
+    var id = await createAndJoinGame(instance, payment, accounts[0], accounts[1]);
+
+    assertEvent(await instance.makeMove(id,3,{from:accounts[0]}),"logMoveMade");
+    assertEvent(await instance.makeMove(id,10,{from:accounts[1]}),"logMoveMade");
+    assertEvent(await instance.makeMove(id,4,{from:accounts[0]}),"logMoveMade");
+    assertEvent(await instance.makeMove(id,5,{from:accounts[1]}),"logMoveMade");
+    assertEvent(await instance.makeMove(id,17,{from:accounts[0]}),"logMoveMade");
+    assertEvent(await instance.makeMove(id,24,{from:accounts[1]}),"logMoveMade");
+    assertEvent(await instance.makeMove(id,0,{from:accounts[0]}),"logMoveMade");
+    assertEvent(await instance.makeMove(id,6,{from:accounts[1]}),"logMoveMade");
+    assertEvent(await instance.makeMove(id,13,{from:accounts[0]}),"logMoveMade");
+    assertEvent(await instance.makeMove(id,20,{from:accounts[1]}),"logMoveMade");
+    assertEvent(await instance.makeMove(id,27,{from:accounts[0]}),"logMoveMade");
+    assertEvent(await instance.makeMove(id,34,{from:accounts[1]}),"logMoveMade");
+    assertEvent(await instance.makeMove(id,41,{from:accounts[0]}),"logMoveMade");
+  })
 
 });

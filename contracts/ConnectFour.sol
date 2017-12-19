@@ -17,8 +17,9 @@ contract ConnectFour is PullPayment {
     //Board is 7 columns by 6 rows
     //0 is the bottom-left corner of the board
     //1 is the second from the left on the bottom
-    //6 is the botto-right corner
+    //6 is the bottom-right corner
     //7 is the left on the second-to-bottom row
+    //41 is the top-right
     BoardPiece[42] board;
 
     BoardPiece whoseTurn;
@@ -207,9 +208,22 @@ contract ConnectFour is PullPayment {
   function claimTimeoutVictory(uint gameId) external
   onlyAfterTimeout(gameId)
   onlyInactivePlayer(gameId)
-  onlyWhilePlaying(gameId)
-  {
+  onlyWhilePlaying(gameId) {
     gameEnd(gameId, getInactivePlayer(gameId));
   }
 
+  function makeMove(uint gameId, uint8 position) external
+  onlyActivePlayer(gameId)
+  onlyWhilePlaying(gameId){
+    BoardPiece player = games[gameId].whoseTurn;
+    games[gameId].board[position] = player;
+
+    if(player == BoardPiece.RED){
+      games[gameId].whoseTurn = BoardPiece.BLACK;
+    } else{
+      games[gameId].whoseTurn = BoardPiece.RED;
+    }
+
+    logMoveMade(gameId, player, position);
+  }
 }
