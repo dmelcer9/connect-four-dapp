@@ -33,6 +33,7 @@ contract ConnectFour is PullPayment {
   event logGameStart(uint gameId);
   event logMoveMade(uint gameId, BoardPiece who, uint8 position);
   event logGameEnd(uint gameId, address winner);
+  event logGameCancel(uint gameId);
 
   uint public moveTimeout;
   uint nextID;
@@ -45,7 +46,7 @@ contract ConnectFour is PullPayment {
   }
 
   modifier onlyWhileNotStarted(uint gameId) {
-    require(!games[gameId].isStarted);
+    require(!games[gameId].isStarted && !games[gameId].gameOver);
     _;
   }
 
@@ -62,13 +63,16 @@ contract ConnectFour is PullPayment {
 
   modifier onlyActivePlayer(uint gameId) {
     require(msg.sender == getActivePlayer(gameId));
-
     _;
   }
 
   modifier onlyInactivePlayer(uint gameId) {
     require(msg.sender == getInactivePlayer(gameId));
+    _;
+  }
 
+  modifier onlyGameCreator(uint gameId) {
+    require(msg.sender == games[gameId].playerOneRed);
     _;
   }
 
@@ -115,6 +119,20 @@ contract ConnectFour is PullPayment {
     games[gameId].isStarted = true;
     games[gameId].whoseTurn = BoardPiece.RED;
     logGameStart(gameId);
+  }
+
+  function cancelCreatedGame(uint gameId)
+    external
+    onlyGameExists(gameId)
+    onlyWhileNotStarted(gameId)
+    onlyGameCreator(gameId)
+  {
+    games[gameId].isStarted = true;
+    games[gameId].gameOver = true;
+
+    asyncSend(msg.sender, games[gameId].bid);
+
+    logGameCancel(gameId);
   }
 
   function forfeit(uint gameId)

@@ -30,7 +30,7 @@ const assertWillRevert = async function(toRevert){
 }
 
 const createGame = async function(c4inst, price, acc1){
-  var txResult = await c4inst.createNewGame({from:acc1,value:price});
+  var txResult = await c4inst.createNewGame({from:acc1,value:price, gasPrice:0});
 
   var createEvent = txResult.logs[0];
   assert.equal(createEvent.event,"logGameCreated");
@@ -43,7 +43,7 @@ const createGame = async function(c4inst, price, acc1){
 const createAndJoinGame = async function(c4inst, price, acc1, acc2){
   var id = await createGame(c4inst, price, acc1);
 
-  await c4inst.joinGame(id,{from:acc2, value:price});
+  await c4inst.joinGame(id,{from:acc2, value:price, gasPrice:0});
 
   return id;
 }
@@ -285,8 +285,6 @@ contract('Connect Four', function(accounts) {
   it('should deny invalid moves', async function(){
     var instance = await ConnectFour.deployed();
 
-
-
     //Game ended
     assertWillRevert(()=>instance.makeMove(0, 0));
 
@@ -330,7 +328,38 @@ contract('Connect Four', function(accounts) {
     assertEvent(await instance.makeMove(id,34,ac1),"logMoveMade");
     assertEvent(await instance.makeMove(id,41,ac0),"logMoveMade");
     assertWillRevert(()=>instance.makeMove(id,48,ac1));
+  })
 
+  it('should let someone cancel a game when nobody joined yet', async function(){
+    var instance = await ConnectFour.deployed();
+
+    var balPre =  web3.eth.getBalance(accounts[0]);
+
+    //Cancel nonexistent game
+    assertWillRevert(()=>instance.cancelCreatedGame(999999999,{gasPrice:0}));
+
+    var id = await createGame(instance, payment, accounts[0]);
+
+    //Account other than game creator
+    assertWillRevert(()=>instance.cancelCreatedGame(id, {from:accounts[1]}));
+
+    assertEvent(
+      await instance.cancelCreatedGame(id,{from:accounts[0],gasPrice:0}),
+      "logGameCancel");
+
+    await instance.withdrawPayments({from:accounts[0],gasPrice:0});
+
+    var balPost = web3.eth.getBalance(accounts[0]);
+
+    assert.isTrue(balPre.eq(balPost));
+
+    //Game already canceled
+    assertWillRevert(()=>instance.cancelCreatedGame(id,{gasPrice:0,from:accounts[0]}));
+
+    //Game started
+    var startedId = createAndJoinGame(instance, payment, accounts[0], accounts[1]);
+    assertWillRevert(()=>instance.cancelCreatedGame(id,{from:accounts[0]}));
+    assertWillRevert(()=>instance.cancelCreatedGame(id,{from:accounts[1]}));
 
   })
 
