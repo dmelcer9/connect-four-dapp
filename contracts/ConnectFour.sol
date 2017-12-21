@@ -201,7 +201,13 @@ contract ConnectFour is PullPayment {
   }
 
   function checkHasWon(uint gameId, BoardPiece who, uint8[4] moves) constant public returns(bool){
+    for(uint8 i = 0; i<4; i++){
+      require(moves[i] >= 0 && moves[i] <= 41);
+      require(games[gameId].board[moves[i]] == who);
+    }
+
     return true;
+
   }
 
   function getBid(uint gameId) constant public returns(uint) {

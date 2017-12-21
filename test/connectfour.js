@@ -286,35 +286,35 @@ contract('Connect Four', function(accounts) {
     var instance = await ConnectFour.deployed();
 
     //Game ended
-    assertWillRevert(()=>instance.makeMove(0, 0));
+    await assertWillRevert(()=>instance.makeMove(0, 0));
 
     //Game probably doesn't exist yet
-    assertWillRevert(()=>instance.makeMove(999999999,0));
+    await assertWillRevert(()=>instance.makeMove(999999999,0));
 
     var id = await createGame(instance, payment, accounts[0]);
-    assertWillRevert(()=>instance.makeMove(id,0));
+    await assertWillRevert(()=>instance.makeMove(id,0));
 
     id = await createAndJoinGame(instance, payment, accounts[0], accounts[1]);
     const ac0 = {from:accounts[0]};
     const ac1 = {from:accounts[1]};
 
     //Invalid first moves
-    assertWillRevert(()=>instance.makeMove(id, -1, ac0));
-    assertWillRevert(()=>instance.makeMove(id, 7, ac0));
-    assertWillRevert(()=>instance.makeMove(id, 42, ac0));
+    await assertWillRevert(()=>instance.makeMove(id, -1, ac0));
+    await assertWillRevert(()=>instance.makeMove(id, 7, ac0));
+    await assertWillRevert(()=>instance.makeMove(id, 42, ac0));
 
     //Wrong accounts
-    assertWillRevert(()=>instance.makeMove(id, 0, ac1));
-    assertWillRevert(()=>instance.makeMove(id, 0, {from:accounts[2]}));
+    await assertWillRevert(()=>instance.makeMove(id, 0, ac1));
+    await assertWillRevert(()=>instance.makeMove(id, 0, {from:accounts[2]}));
 
     assertEvent(await instance.makeMove(id,0,ac0),"logMoveMade");
 
     //Already has a chip there
-    assertWillRevert(()=>instance.makeMove(id, 0, ac1));
-    assertWillRevert(()=>instance.makeMove(id, 14, ac1))
+    await assertWillRevert(()=>instance.makeMove(id, 0, ac1));
+    await assertWillRevert(()=>instance.makeMove(id, 14, ac1))
 
     //Wrong accounts again
-    assertWillRevert(()=>instance.makeMove(id, 3, ac0));
+    await assertWillRevert(()=>instance.makeMove(id, 3, ac0));
 
 
     //Fill board up to top
@@ -323,11 +323,11 @@ contract('Connect Four', function(accounts) {
     assertEvent(await instance.makeMove(id,20,ac1),"logMoveMade");
     assertEvent(await instance.makeMove(id,27,ac0),"logMoveMade");
 
-    assertWillRevert(()=>instance.makeMove(id,41,ac1));
+    await assertWillRevert(()=>instance.makeMove(id,41,ac1));
 
     assertEvent(await instance.makeMove(id,34,ac1),"logMoveMade");
     assertEvent(await instance.makeMove(id,41,ac0),"logMoveMade");
-    assertWillRevert(()=>instance.makeMove(id,48,ac1));
+    await assertWillRevert(()=>instance.makeMove(id,48,ac1));
   })
 
   it('should let someone cancel a game when nobody joined yet', async function(){
@@ -336,12 +336,12 @@ contract('Connect Four', function(accounts) {
     var balPre =  web3.eth.getBalance(accounts[0]);
 
     //Cancel nonexistent game
-    assertWillRevert(()=>instance.cancelCreatedGame(999999999,{gasPrice:0}));
+    await assertWillRevert(()=>instance.cancelCreatedGame(999999999,{gasPrice:0}));
 
     var id = await createGame(instance, payment, accounts[0]);
 
     //Account other than game creator
-    assertWillRevert(()=>instance.cancelCreatedGame(id, {from:accounts[1]}));
+    await assertWillRevert(()=>instance.cancelCreatedGame(id, {from:accounts[1]}));
 
     assertEvent(
       await instance.cancelCreatedGame(id,{from:accounts[0],gasPrice:0}),
@@ -354,12 +354,12 @@ contract('Connect Four', function(accounts) {
     assert.isTrue(balPre.eq(balPost));
 
     //Game already canceled
-    assertWillRevert(()=>instance.cancelCreatedGame(id,{gasPrice:0,from:accounts[0]}));
+    await assertWillRevert(()=>instance.cancelCreatedGame(id,{gasPrice:0,from:accounts[0]}));
 
     //Game started
     var startedId = createAndJoinGame(instance, payment, accounts[0], accounts[1]);
-    assertWillRevert(()=>instance.cancelCreatedGame(id,{from:accounts[0]}));
-    assertWillRevert(()=>instance.cancelCreatedGame(id,{from:accounts[1]}));
+    await assertWillRevert(()=>instance.cancelCreatedGame(id,{from:accounts[0]}));
+    await assertWillRevert(()=>instance.cancelCreatedGame(id,{from:accounts[1]}));
 
   })
 
@@ -388,5 +388,56 @@ contract('Connect Four', function(accounts) {
     assert.isTrue(balPre.add(web3.toWei(.02,"ether")).eq(balPost));
 
   })
+
+  it('should allow claiming victory horizontal', async function(){
+    assert.fail("Not implemented");
+  })
+
+  it('should allow claiming victory vertical', async function(){
+    assert.fail("Not implemented");
+  })
+
+  it('should allow claiming victory both diagnols', async function(){
+    assert.fail("Not implemented");
+  })
+
+  it('should deny claiming victory with wrong pieces', async function(){
+    var instance = await ConnectFour.deployed();
+
+    const ac0 = {from:accounts[0]};
+    const ac1 = {from:accounts[1]};
+
+    var id = await createAndJoinGame(instance, payment, accounts[0], accounts[1]);
+
+    await assertWillRevert(()=>instance.makeMoveAndClaimVictory(id, 3, [0,1,2,3]));
+
+    await instance.makeMove(id, 3, ac0);
+    await instance.makeMove(id, 2, ac1);
+    await instance.makeMove(id, 4, ac0);
+    await instance.makeMove(id, 1, ac1);
+    await instance.makeMove(id, 5, ac0);
+    await instance.makeMove(id, 0, ac1);
+    await instance.makeMove(id, 6, ac0);
+    await assertWillRevert(()=>
+       instance.makeMoveAndClaimVictory(id, 7, [3,4,5,6], {from:accounts[1],gasPrice:0}));
+
+    await assertWillRevert(()=>
+       instance.makeMoveAndClaimVictory(id, 7, [0,1,2,3], {from:accounts[1],gasPrice:0}));
+
+  })
+
+  it('should deny claiming victory when pieces do not line up', async function(){
+    assert.fail("Not implemented");
+  });
+
+  it('should deny claiming victory when there is a break between two pieces', async function(){
+    assert.fail("Not implemented");
+  });
+
+  it('should deny claiming victory when pieces wrap around', async function(){
+    assert.fail("Not implemented");
+  });
+
+
 
 });
