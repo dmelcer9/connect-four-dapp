@@ -363,4 +363,30 @@ contract('Connect Four', function(accounts) {
 
   })
 
+  it('should pay the winner of a game', async function(){
+    var instance = await ConnectFour.deployed();
+
+    const ac0 = {from:accounts[0]};
+    const ac1 = {from:accounts[1]};
+
+    var id = await createAndJoinGame(instance, payment, accounts[0], accounts[1]);
+
+    await instance.makeMove(id, 3, ac0);
+    await instance.makeMove(id, 2, ac1);
+    await instance.makeMove(id, 4, ac0);
+    await instance.makeMove(id, 1, ac1);
+    await instance.makeMove(id, 5, ac0);
+    await instance.makeMove(id, 0, ac1);
+
+    var balPre = web3.eth.getBalance(accounts[0]);
+
+    await instance.makeMoveAndClaimVictory(id, 6, [3,4,5,6], {gasPrice:0});
+    await instance.withdrawPayments({from:accounts[0],gasPrice:0});
+
+    var balPost = web3.eth.getBalance(accounts[0]);
+
+    assert.isTrue(balPre.add(web3.toWei(.02,"ether")).eq(balPost));
+
+  })
+
 });

@@ -159,8 +159,24 @@ contract ConnectFour is PullPayment {
     gameEnd(gameId, getInactivePlayer(gameId));
   }
 
-  function makeMove(uint gameId, uint8 position)
+  //The pieces in toClaim must be sorted positions, least to greatest
+  function makeMoveAndClaimVictory(uint gameId, uint8 moveToMake, uint8[4] claim)
     external
+    onlyActivePlayer(gameId)
+    onlyWhilePlaying(gameId)
+  {
+    BoardPiece player = games[gameId].whoseTurn;
+    address playerAddress = getActivePlayer(gameId);
+
+    makeMove(gameId, moveToMake);
+
+    require(checkHasWon(gameId, player, claim));
+
+    gameEnd(gameId,playerAddress);
+  }
+
+  function makeMove(uint gameId, uint8 position)
+    public
     onlyActivePlayer(gameId)
     onlyWhilePlaying(gameId)
   {
@@ -182,6 +198,10 @@ contract ConnectFour is PullPayment {
     }
 
     logMoveMade(gameId, player, position);
+  }
+
+  function checkHasWon(uint gameId, BoardPiece who, uint8[4] moves) constant public returns(bool){
+    return true;
   }
 
   function getBid(uint gameId) constant public returns(uint) {
