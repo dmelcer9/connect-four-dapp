@@ -476,11 +476,20 @@ contract('Connect Four', function(accounts) {
     /*
     * * * * * * *
     * * * * * * *
-    * * * * * * *
-    * * * * * * *
-    * * * * * * *
-    * * * * * * *
+    * * * R * * *
+    * * * R B * *
+    * * * R B * *
+    * * * R B * *
     */
+
+    await instance.makeMove(id, 3, ac0);
+    await instance.makeMove(id, 4, ac1);
+    await instance.makeMove(id, 10, ac0);
+    await instance.makeMove(id, 11 ac1);
+    await instance.makeMove(id, 17, ac0);
+    await instance.makeMove(id, 18, ac1);
+
+    await instance.makeMoveAndClaimVictory(id, 24, [3,10,17,24]);
   })
 
   it('should allow claiming victory both diagnols', async function(){
