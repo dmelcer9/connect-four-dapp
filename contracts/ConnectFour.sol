@@ -7,6 +7,8 @@ import "../node_modules/zeppelin-solidity/contracts/payment/PullPayment.sol";
 contract ConnectFour is PullPayment {
 
   enum BoardPiece {NONE, RED, BLACK}
+
+  //Encapsulates total game lead.
   struct GameState {
     uint bid; //How much each player bids
     uint lastTimePlayed; //When was the last move made?
@@ -35,9 +37,13 @@ contract ConnectFour is PullPayment {
   event logGameEnd(uint gameId, address winner);
   event logGameCancel(uint gameId);
 
+  //How long someone has to move before the other player can claim victory
   uint public moveTimeout;
+
+  //Counter so each game has a unique ID
   uint nextID;
 
+  //The state of all the games
   mapping (uint => GameState) games;
 
   modifier onlyGameExists(uint gameId) {
