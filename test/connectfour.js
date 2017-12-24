@@ -464,7 +464,6 @@ contract('Connect Four', function(accounts) {
   })
 
   it('should allow claiming victory vertical', async function(){
-    assert.fail("Not implemented");
 
     var instance = await ConnectFour.deployed();
 
@@ -485,7 +484,7 @@ contract('Connect Four', function(accounts) {
     await instance.makeMove(id, 3, ac0);
     await instance.makeMove(id, 4, ac1);
     await instance.makeMove(id, 10, ac0);
-    await instance.makeMove(id, 11 ac1);
+    await instance.makeMove(id, 11, ac1);
     await instance.makeMove(id, 17, ac0);
     await instance.makeMove(id, 18, ac1);
 
@@ -493,7 +492,7 @@ contract('Connect Four', function(accounts) {
   })
 
   it('should allow claiming victory both diagnols', async function(){
-    assert.fail("Not implemented");
+    // Diagnol Up-Right
 
     var instance = await ConnectFour.deployed();
 
@@ -505,11 +504,57 @@ contract('Connect Four', function(accounts) {
     /*
     * * * * * * *
     * * * * * * *
-    * * * * * * *
-    * * * * * * *
-    * * * * * * *
-    * * * * * * *
+    * * * * * * R
+    * * * * * R R
+    * * * * R B B
+    * B * R B B R
     */
+
+    await instance.makeMove(id, 3, ac0);
+    await instance.makeMove(id, 4, ac1);
+    await instance.makeMove(id, 11, ac0);
+    await instance.makeMove(id, 5, ac1);
+    await instance.makeMove(id, 6, ac0);
+    await instance.makeMove(id, 12, ac1);
+    await instance.makeMove(id, 19, ac0);
+    await instance.makeMove(id, 13, ac1);
+    await instance.makeMove(id, 20, ac0);
+    await instance.makeMove(id, 1, ac1);
+
+    await instance.makeMoveAndClaimVictory(id, 27, [3,11,19,27]);
+
+    //Diagnol Up-Left
+
+    var id = await createAndJoinGame(instance, payment, accounts[0], accounts[1]);
+
+    /*
+    * * * * * * *
+    * B R * * * *
+    * B B * * * *
+    * R R B * * *
+    * B B R B * *
+    * R R B R R *
+    */
+
+    await instance.makeMove(id, 5, ac0);
+    await instance.makeMove(id, 3, ac1);
+    await instance.makeMove(id, 4, ac0);
+    await instance.makeMove(id, 11, ac1);
+    await instance.makeMove(id, 10, ac0);
+    await instance.makeMove(id, 17, ac1);
+    await instance.makeMove(id, 2, ac0);
+    await instance.makeMove(id, 9, ac1);
+    await instance.makeMove(id, 16, ac0);
+    await instance.makeMove(id, 23, ac1);
+    await instance.makeMove(id, 1, ac0);
+    await instance.makeMove(id, 8, ac1);
+    await instance.makeMove(id, 15, ac0);
+    await instance.makeMove(id, 22, ac1);
+    await instance.makeMove(id, 30, ac0);
+
+    await instance.makeMoveAndClaimVictory(id, 29, [11,17,23,29], ac1);
+
+
   })
 
   it('should deny claiming victory with wrong pieces', async function(){
@@ -539,6 +584,23 @@ contract('Connect Four', function(accounts) {
 
   it('should deny claiming victory when pieces do not line up', async function(){
     assert.fail("Not implemented");
+
+    var instance = await ConnectFour.deployed();
+
+    const ac0 = {from:accounts[0]};
+    const ac1 = {from:accounts[1]};
+
+    var id = await createAndJoinGame(instance, payment, accounts[0], accounts[1]);
+
+    /*
+    * * * * * * *
+    * * * * * * *
+    * * * * * * *
+    * * * * * * *
+    * * * * * * *
+    * * * * * * *
+    */
+
   });
 
   it('should deny claiming victory when there is a break between two pieces', async function(){
