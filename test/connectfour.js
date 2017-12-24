@@ -363,13 +363,22 @@ contract('Connect Four', function(accounts) {
 
   })
 
-  it('should pay the winner of a game', async function(){
+  it('should pay the winner of a game if red', async function(){
     var instance = await ConnectFour.deployed();
 
     const ac0 = {from:accounts[0]};
     const ac1 = {from:accounts[1]};
 
     var id = await createAndJoinGame(instance, payment, accounts[0], accounts[1]);
+
+    /*
+    * * * * * * *
+    * * * * * * *
+    * * * * * * *
+    * * * * * * *
+    * * * * * * *
+    B B B R R R R
+    */
 
     await instance.makeMove(id, 3, ac0);
     await instance.makeMove(id, 2, ac1);
@@ -389,16 +398,109 @@ contract('Connect Four', function(accounts) {
 
   })
 
+  it('should pay the winner of a game if black', async function(){
+    var instance = await ConnectFour.deployed();
+
+    const ac0 = {from:accounts[0]};
+    const ac1 = {from:accounts[1]};
+
+    var id = await createAndJoinGame(instance, payment, accounts[0], accounts[1]);
+
+    /*
+    * * * * * * *
+    * * * * * * *
+    * * * * * * *
+    * * * * * * *
+    * * * * R * *
+    B B B B R R R
+    */
+
+    await instance.makeMove(id, 4, ac0);
+    await instance.makeMove(id, 0, ac1);
+    await instance.makeMove(id, 5, ac0);
+    await instance.makeMove(id, 1, ac1);
+    await instance.makeMove(id, 6, ac0);
+    await instance.makeMove(id, 2, ac1);
+    await instance.makeMove(id, 11, ac0);
+
+    var balPre = web3.eth.getBalance(accounts[1]);
+
+    await instance.makeMoveAndClaimVictory(id, 3, [0,1,2,3], {from:accounts[1],gasPrice:0});
+    await instance.withdrawPayments({from:accounts[1],gasPrice:0});
+
+    var balPost = web3.eth.getBalance(accounts[1]);
+
+    assert.isTrue(balPre.add(web3.toWei(.02,"ether")).eq(balPost));
+
+  })
+
   it('should allow claiming victory horizontal', async function(){
-    assert.fail("Not implemented");
+    var instance = await ConnectFour.deployed();
+
+    const ac0 = {from:accounts[0]};
+    const ac1 = {from:accounts[1]};
+
+    var id = await createAndJoinGame(instance, payment, accounts[0], accounts[1]);
+
+    /*
+    * * * * * * *
+    * * * * * * *
+    * * * * * * *
+    * * * * * * *
+    * * R R R R *
+    * B R B B B *
+    */
+
+    await instance.makeMove(id, 2, ac0);
+    await instance.makeMove(id, 3, ac1);
+    await instance.makeMove(id, 9, ac0);
+    await instance.makeMove(id, 4, ac1);
+    await instance.makeMove(id, 10, ac0);
+    await instance.makeMove(id, 5, ac1);
+    await instance.makeMove(id, 12, ac0);
+    await instance.makeMove(id, 1, ac1);
+
+    await instance.makeMoveAndClaimVictory(id, 11, [9,10,11,12]);
   })
 
   it('should allow claiming victory vertical', async function(){
     assert.fail("Not implemented");
+
+    var instance = await ConnectFour.deployed();
+
+    const ac0 = {from:accounts[0]};
+    const ac1 = {from:accounts[1]};
+
+    var id = await createAndJoinGame(instance, payment, accounts[0], accounts[1]);
+
+    /*
+    * * * * * * *
+    * * * * * * *
+    * * * * * * *
+    * * * * * * *
+    * * * * * * *
+    * * * * * * *
+    */
   })
 
   it('should allow claiming victory both diagnols', async function(){
     assert.fail("Not implemented");
+
+    var instance = await ConnectFour.deployed();
+
+    const ac0 = {from:accounts[0]};
+    const ac1 = {from:accounts[1]};
+
+    var id = await createAndJoinGame(instance, payment, accounts[0], accounts[1]);
+
+    /*
+    * * * * * * *
+    * * * * * * *
+    * * * * * * *
+    * * * * * * *
+    * * * * * * *
+    * * * * * * *
+    */
   })
 
   it('should deny claiming victory with wrong pieces', async function(){
