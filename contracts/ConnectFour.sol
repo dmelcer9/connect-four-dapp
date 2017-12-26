@@ -67,11 +67,13 @@ contract ConnectFour is PullPayment {
       _;
   }
 
+  //Only the player whose turn it is
   modifier onlyActivePlayer(uint gameId) {
     require(msg.sender == getActivePlayer(gameId));
     _;
   }
 
+  //Only the player whose turn it isn't
   modifier onlyInactivePlayer(uint gameId) {
     require(msg.sender == getInactivePlayer(gameId));
     _;
@@ -95,11 +97,13 @@ contract ConnectFour is PullPayment {
     revert();
   }
 
+  //Creates a game with a unique ID. Anyone can join this game.
   function createNewGame() external payable {
     uint gameId = createUniqueId();
     createNewGameEntry(gameId);
   }
 
+  //Creates a game where only a specified player can join.
   function createNewRestrictedGame(address playerTwo) external payable {
     require(playerTwo != msg.sender);
     uint gameId = createUniqueId();
@@ -108,6 +112,7 @@ contract ConnectFour is PullPayment {
     createNewGameEntry(gameId);
   }
 
+  //Join a game that another person has created.
   function joinGame(uint gameId) external payable
     onlyGameExists(gameId)
     onlyWhileNotStarted(gameId)
@@ -127,6 +132,7 @@ contract ConnectFour is PullPayment {
     logGameStart(gameId);
   }
 
+  //If nobody has joined your game, you can cancel and get money back
   function cancelCreatedGame(uint gameId)
     external
     onlyGameExists(gameId)
@@ -181,6 +187,7 @@ contract ConnectFour is PullPayment {
     gameEnd(gameId,playerAddress);
   }
 
+  //If the move is valid, make a move on the board
   function makeMove(uint gameId, uint8 position)
     public
     onlyActivePlayer(gameId)
@@ -206,6 +213,7 @@ contract ConnectFour is PullPayment {
     logMoveMade(gameId, player, position);
   }
 
+  //Is a set of four pieces a valid victory
   function checkHasWon(uint gameId, BoardPiece who, uint8[4] moves) constant public returns(bool){
     for(uint8 i = 0; i<4; i++){
       require(moves[i] >= 0 && moves[i] <= 41);
@@ -216,6 +224,7 @@ contract ConnectFour is PullPayment {
 
   }
 
+  //Accessor functions per game
   function getBid(uint gameId) constant public returns(uint) {
     return games[gameId].bid;
   }
@@ -252,6 +261,7 @@ contract ConnectFour is PullPayment {
     return games[gameId].gameOver;
   }
 
+  //Player that is currently going
   function getActivePlayer(uint gameId) constant internal returns(address){
     BoardPiece player = games[gameId].whoseTurn;
 
@@ -264,6 +274,7 @@ contract ConnectFour is PullPayment {
     }
   }
 
+  //Player that is currently not going
   function getInactivePlayer(uint gameId) constant internal returns(address){
     BoardPiece player = games[gameId].whoseTurn;
 
@@ -276,17 +287,19 @@ contract ConnectFour is PullPayment {
     }
   }
 
+  //Increment the game ID and return it
   function createUniqueId() private returns(uint) {
     return nextID++;
   }
 
-
+  //Helper function for game creation
   function createNewGameEntry(uint gameId) private{
     games[gameId].bid = msg.value;
     games[gameId].playerOneRed = msg.sender;
     logGameCreated(gameId, false);
   }
 
+  //Helper function for game end
   function gameEnd(uint gameId, address winner) private {
     games[gameId].gameOver = true;
     uint256 payout = games[gameId].bid * 2;
