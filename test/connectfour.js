@@ -647,7 +647,82 @@ contract('Connect Four', function(accounts) {
   });
 
   it('should deny claiming victory when pieces wrap around', async function(){
-    assert.fail("Not implemented");
+    var instance = await ConnectFour.deployed();
+
+    const ac0 = {from:accounts[0]};
+    const ac1 = {from:accounts[1]};
+
+    //Straight line
+    var id = await createAndJoinGame(instance, payment, accounts[0], accounts[1]);
+
+    /*
+    * * * * * * *
+    * * * * * * *
+    * * * * * * *
+    * * * * * * *
+    R R R * * * *
+    B B B * * * R
+    */
+
+    await instance.makeMove(id, 6, ac0);
+    await instance.makeMove(id, 0, ac1);
+    await instance.makeMove(id, 7, ac0);
+    await instance.makeMove(id, 1, ac1);
+    await instance.makeMove(id, 8, ac0);
+    await instance.makeMove(id, 2, ac1);
+    await assertWillRevert(()=>
+       instance.makeMoveAndClaimVictory(id, 9, [6,7,8,9], ac0));
+
+
+    //Diagnol left
+    var id = await createAndJoinGame(instance, payment, accounts[0], accounts[1]);
+
+    /*
+    * * * * * * *
+    * * * * * * *
+    * * * * * * *
+    R * * * * * R
+    B R * * * * B
+    B B R * * * R
+    */
+
+    await instance.makeMove(id, 2, ac0);
+    await instance.makeMove(id, 1, ac1);
+    await instance.makeMove(id, 8, ac0);
+    await instance.makeMove(id, 0, ac1);
+    await instance.makeMove(id, 6, ac0);
+    await instance.makeMove(id, 7, ac1);
+    await instance.makeMove(id, 14, ac0);
+    await instance.makeMove(id, 13, ac1);
+    await assertWillRevert(()=>
+       instance.makeMoveAndClaimVictory(id, 20, [2,8,14,20], ac0));
+
+    //Diagnol right
+    var id = await createAndJoinGame(instance, payment, accounts[0], accounts[1]);
+
+    /*
+    * * * * * * *
+    * R * * * * *
+    R R * * * * *
+    B B * * * * *
+    B R * * * * R
+    B R * B * R B
+    */
+
+    await instance.makeMove(id, 5, ac0);
+    await instance.makeMove(id, 6, ac1);
+    await instance.makeMove(id, 13, ac0);
+    await instance.makeMove(id, 0, ac1);
+    await instance.makeMove(id, 1, ac0);
+    await instance.makeMove(id, 7, ac1);
+    await instance.makeMove(id, 8, ac0);
+    await instance.makeMove(id, 14, ac1);
+    await instance.makeMove(id, 21, ac0);
+    await instance.makeMove(id, 15, ac1);
+    await instance.makeMove(id, 22, ac0);
+    await instance.makeMove(id, 3, ac1);
+    await assertWillRevert(()=>
+       instance.makeMoveAndClaimVictory(id, 29, [5,13,21,29], ac0));
   });
 
 

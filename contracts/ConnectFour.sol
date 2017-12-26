@@ -215,7 +215,7 @@ contract ConnectFour is PullPayment {
 
   //Is a set of four pieces a valid victory
   function checkHasWon(uint gameId, BoardPiece who, uint8[4] moves) constant public returns(bool){
-    for(uint8 i = 0; i<4; i++){
+    for (uint8 i = 0; i<4; i++){
       require(moves[i] >= 0 && moves[i] <= 41);
       require(games[gameId].board[moves[i]] == who);
     }
@@ -228,11 +228,19 @@ contract ConnectFour is PullPayment {
     require(moves[2] - moves[1] == diff &&
             moves[3] - moves[2] == diff);
 
-    //Pieces are horizontal, vertical, or Diagnol
-    require(diff == 1 ||
-            diff == 6 ||
-            diff == 7 ||
-            diff == 8);
+    //Make sure pieces are in a valid arrangement
+    //And prevent wrap-around
+    if (diff == 1 || diff == 8){
+      //The last piace should be further to the right than the first one
+      require(moves[0] % 7 < moves[3] % 7);
+    } else if (diff == 6){
+      //The last piece should be further to the left than the first one
+      require(moves[3] % 7 < moves[0] % 7);
+    } else if (diff == 7){
+      //Wrap-around isn't a problem with vertical pieces
+    } else{
+      revert();
+    }
 
     return true;
 
