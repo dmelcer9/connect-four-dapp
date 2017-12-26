@@ -220,6 +220,20 @@ contract ConnectFour is PullPayment {
       require(games[gameId].board[moves[i]] == who);
     }
 
+    //First 2 pieces must be in increasing order
+    require(moves[0] < moves[1]);
+    uint8 diff = moves[1] - moves[0];
+
+    //All other pieces must line up the same as the first 2 (and also be increasing)
+    require(moves[2] - moves[1] == diff &&
+            moves[3] - moves[2] == diff);
+
+    //Pieces are horizontal, vertical, or Diagnol
+    require(diff == 1 ||
+            diff == 6 ||
+            diff == 7 ||
+            diff == 8);
+
     return true;
 
   }
