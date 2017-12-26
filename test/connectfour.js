@@ -30,7 +30,7 @@ const assertWillRevert = async function(toRevert){
 }
 
 const createGame = async function(c4inst, price, acc1){
-  var txResult = await c4inst.createNewGame({from:acc1,value:price});
+  var txResult = await c4inst.createNewGame({from:acc1,value:price, gasPrice:0});
 
   var createEvent = txResult.logs[0];
   assert.equal(createEvent.event,"logGameCreated");
@@ -43,7 +43,7 @@ const createGame = async function(c4inst, price, acc1){
 const createAndJoinGame = async function(c4inst, price, acc1, acc2){
   var id = await createGame(c4inst, price, acc1);
 
-  await c4inst.joinGame(id,{from:acc2, value:price});
+  await c4inst.joinGame(id,{from:acc2, value:price, gasPrice:0});
 
   return id;
 }
@@ -285,38 +285,36 @@ contract('Connect Four', function(accounts) {
   it('should deny invalid moves', async function(){
     var instance = await ConnectFour.deployed();
 
-
-
     //Game ended
-    assertWillRevert(()=>instance.makeMove(0, 0));
+    await assertWillRevert(()=>instance.makeMove(0, 0));
 
     //Game probably doesn't exist yet
-    assertWillRevert(()=>instance.makeMove(999999999,0));
+    await assertWillRevert(()=>instance.makeMove(999999999,0));
 
     var id = await createGame(instance, payment, accounts[0]);
-    assertWillRevert(()=>instance.makeMove(id,0));
+    await assertWillRevert(()=>instance.makeMove(id,0));
 
     id = await createAndJoinGame(instance, payment, accounts[0], accounts[1]);
     const ac0 = {from:accounts[0]};
     const ac1 = {from:accounts[1]};
 
     //Invalid first moves
-    assertWillRevert(()=>instance.makeMove(id, -1, ac0));
-    assertWillRevert(()=>instance.makeMove(id, 7, ac0));
-    assertWillRevert(()=>instance.makeMove(id, 42, ac0));
+    await assertWillRevert(()=>instance.makeMove(id, -1, ac0));
+    await assertWillRevert(()=>instance.makeMove(id, 7, ac0));
+    await assertWillRevert(()=>instance.makeMove(id, 42, ac0));
 
     //Wrong accounts
-    assertWillRevert(()=>instance.makeMove(id, 0, ac1));
-    assertWillRevert(()=>instance.makeMove(id, 0, {from:accounts[2]}));
+    await assertWillRevert(()=>instance.makeMove(id, 0, ac1));
+    await assertWillRevert(()=>instance.makeMove(id, 0, {from:accounts[2]}));
 
     assertEvent(await instance.makeMove(id,0,ac0),"logMoveMade");
 
     //Already has a chip there
-    assertWillRevert(()=>instance.makeMove(id, 0, ac1));
-    assertWillRevert(()=>instance.makeMove(id, 14, ac1))
+    await assertWillRevert(()=>instance.makeMove(id, 0, ac1));
+    await assertWillRevert(()=>instance.makeMove(id, 14, ac1))
 
     //Wrong accounts again
-    assertWillRevert(()=>instance.makeMove(id, 3, ac0));
+    await assertWillRevert(()=>instance.makeMove(id, 3, ac0));
 
 
     //Fill board up to top
@@ -325,13 +323,408 @@ contract('Connect Four', function(accounts) {
     assertEvent(await instance.makeMove(id,20,ac1),"logMoveMade");
     assertEvent(await instance.makeMove(id,27,ac0),"logMoveMade");
 
-    assertWillRevert(()=>instance.makeMove(id,41,ac1));
+    await assertWillRevert(()=>instance.makeMove(id,41,ac1));
 
     assertEvent(await instance.makeMove(id,34,ac1),"logMoveMade");
     assertEvent(await instance.makeMove(id,41,ac0),"logMoveMade");
-    assertWillRevert(()=>instance.makeMove(id,48,ac1));
+    await assertWillRevert(()=>instance.makeMove(id,48,ac1));
+  })
+
+  it('should let someone cancel a game when nobody joined yet', async function(){
+    var instance = await ConnectFour.deployed();
+
+    var balPre =  web3.eth.getBalance(accounts[0]);
+
+    //Cancel nonexistent game
+    await assertWillRevert(()=>instance.cancelCreatedGame(999999999,{gasPrice:0}));
+
+    var id = await createGame(instance, payment, accounts[0]);
+
+    //Account other than game creator
+    await assertWillRevert(()=>instance.cancelCreatedGame(id, {from:accounts[1]}));
+
+    assertEvent(
+      await instance.cancelCreatedGame(id,{from:accounts[0],gasPrice:0}),
+      "logGameCancel");
+
+    await instance.withdrawPayments({from:accounts[0],gasPrice:0});
+
+    var balPost = web3.eth.getBalance(accounts[0]);
+
+    assert.isTrue(balPre.eq(balPost));
+
+    //Game already canceled
+    await assertWillRevert(()=>instance.cancelCreatedGame(id,{gasPrice:0,from:accounts[0]}));
+
+    //Game started
+    var startedId = createAndJoinGame(instance, payment, accounts[0], accounts[1]);
+    await assertWillRevert(()=>instance.cancelCreatedGame(id,{from:accounts[0]}));
+    await assertWillRevert(()=>instance.cancelCreatedGame(id,{from:accounts[1]}));
+
+  })
+
+  it('should pay the winner of a game if red', async function(){
+    var instance = await ConnectFour.deployed();
+
+    const ac0 = {from:accounts[0]};
+    const ac1 = {from:accounts[1]};
+
+    var id = await createAndJoinGame(instance, payment, accounts[0], accounts[1]);
+
+    /*
+    * * * * * * *
+    * * * * * * *
+    * * * * * * *
+    * * * * * * *
+    * * * * * * *
+    B B B R R R R
+    */
+
+    await instance.makeMove(id, 3, ac0);
+    await instance.makeMove(id, 2, ac1);
+    await instance.makeMove(id, 4, ac0);
+    await instance.makeMove(id, 1, ac1);
+    await instance.makeMove(id, 5, ac0);
+    await instance.makeMove(id, 0, ac1);
+
+    var balPre = web3.eth.getBalance(accounts[0]);
+
+    await instance.makeMoveAndClaimVictory(id, 6, [3,4,5,6], {gasPrice:0});
+    await instance.withdrawPayments({from:accounts[0],gasPrice:0});
+
+    var balPost = web3.eth.getBalance(accounts[0]);
+
+    assert.isTrue(balPre.add(web3.toWei(.02,"ether")).eq(balPost));
+
+  })
+
+  it('should pay the winner of a game if black', async function(){
+    var instance = await ConnectFour.deployed();
+
+    const ac0 = {from:accounts[0]};
+    const ac1 = {from:accounts[1]};
+
+    var id = await createAndJoinGame(instance, payment, accounts[0], accounts[1]);
+
+    /*
+    * * * * * * *
+    * * * * * * *
+    * * * * * * *
+    * * * * * * *
+    * * * * R * *
+    B B B B R R R
+    */
+
+    await instance.makeMove(id, 4, ac0);
+    await instance.makeMove(id, 0, ac1);
+    await instance.makeMove(id, 5, ac0);
+    await instance.makeMove(id, 1, ac1);
+    await instance.makeMove(id, 6, ac0);
+    await instance.makeMove(id, 2, ac1);
+    await instance.makeMove(id, 11, ac0);
+
+    var balPre = web3.eth.getBalance(accounts[1]);
+
+    await instance.makeMoveAndClaimVictory(id, 3, [0,1,2,3], {from:accounts[1],gasPrice:0});
+    await instance.withdrawPayments({from:accounts[1],gasPrice:0});
+
+    var balPost = web3.eth.getBalance(accounts[1]);
+
+    assert.isTrue(balPre.add(web3.toWei(.02,"ether")).eq(balPost));
+
+  })
+
+  it('should allow claiming victory horizontal', async function(){
+    var instance = await ConnectFour.deployed();
+
+    const ac0 = {from:accounts[0]};
+    const ac1 = {from:accounts[1]};
+
+    var id = await createAndJoinGame(instance, payment, accounts[0], accounts[1]);
+
+    /*
+    * * * * * * *
+    * * * * * * *
+    * * * * * * *
+    * * * * * * *
+    * * R R R R *
+    * B R B B B *
+    */
+
+    await instance.makeMove(id, 2, ac0);
+    await instance.makeMove(id, 3, ac1);
+    await instance.makeMove(id, 9, ac0);
+    await instance.makeMove(id, 4, ac1);
+    await instance.makeMove(id, 10, ac0);
+    await instance.makeMove(id, 5, ac1);
+    await instance.makeMove(id, 12, ac0);
+    await instance.makeMove(id, 1, ac1);
+
+    await instance.makeMoveAndClaimVictory(id, 11, [9,10,11,12]);
+  })
+
+  it('should allow claiming victory vertical', async function(){
+
+    var instance = await ConnectFour.deployed();
+
+    const ac0 = {from:accounts[0]};
+    const ac1 = {from:accounts[1]};
+
+    var id = await createAndJoinGame(instance, payment, accounts[0], accounts[1]);
+
+    /*
+    * * * * * * *
+    * * * * * * *
+    * * * R * * *
+    * * * R B * *
+    * * * R B * *
+    * * * R B * *
+    */
+
+    await instance.makeMove(id, 3, ac0);
+    await instance.makeMove(id, 4, ac1);
+    await instance.makeMove(id, 10, ac0);
+    await instance.makeMove(id, 11, ac1);
+    await instance.makeMove(id, 17, ac0);
+    await instance.makeMove(id, 18, ac1);
+
+    await instance.makeMoveAndClaimVictory(id, 24, [3,10,17,24]);
+  })
+
+  it('should allow claiming victory both diagnols', async function(){
+    // Diagnol Up-Right
+
+    var instance = await ConnectFour.deployed();
+
+    const ac0 = {from:accounts[0]};
+    const ac1 = {from:accounts[1]};
+
+    var id = await createAndJoinGame(instance, payment, accounts[0], accounts[1]);
+
+    /*
+    * * * * * * *
+    * * * * * * *
+    * * * * * * R
+    * * * * * R R
+    * * * * R B B
+    * B * R B B R
+    */
+
+    await instance.makeMove(id, 3, ac0);
+    await instance.makeMove(id, 4, ac1);
+    await instance.makeMove(id, 11, ac0);
+    await instance.makeMove(id, 5, ac1);
+    await instance.makeMove(id, 6, ac0);
+    await instance.makeMove(id, 12, ac1);
+    await instance.makeMove(id, 19, ac0);
+    await instance.makeMove(id, 13, ac1);
+    await instance.makeMove(id, 20, ac0);
+    await instance.makeMove(id, 1, ac1);
+
+    await instance.makeMoveAndClaimVictory(id, 27, [3,11,19,27]);
+
+    //Diagnol Up-Left
+
+    var id = await createAndJoinGame(instance, payment, accounts[0], accounts[1]);
+
+    /*
+    * * * * * * *
+    * B R * * * *
+    * B B * * * *
+    * R R B * * *
+    * B B R B * *
+    * R R B R R *
+    */
+
+    await instance.makeMove(id, 5, ac0);
+    await instance.makeMove(id, 3, ac1);
+    await instance.makeMove(id, 4, ac0);
+    await instance.makeMove(id, 11, ac1);
+    await instance.makeMove(id, 10, ac0);
+    await instance.makeMove(id, 17, ac1);
+    await instance.makeMove(id, 2, ac0);
+    await instance.makeMove(id, 9, ac1);
+    await instance.makeMove(id, 16, ac0);
+    await instance.makeMove(id, 23, ac1);
+    await instance.makeMove(id, 1, ac0);
+    await instance.makeMove(id, 8, ac1);
+    await instance.makeMove(id, 15, ac0);
+    await instance.makeMove(id, 22, ac1);
+    await instance.makeMove(id, 30, ac0);
+
+    await instance.makeMoveAndClaimVictory(id, 29, [11,17,23,29], ac1);
 
 
   })
+
+  it('should deny claiming victory with wrong pieces', async function(){
+    var instance = await ConnectFour.deployed();
+
+    const ac0 = {from:accounts[0]};
+    const ac1 = {from:accounts[1]};
+
+    var id = await createAndJoinGame(instance, payment, accounts[0], accounts[1]);
+
+    await assertWillRevert(()=>instance.makeMoveAndClaimVictory(id, 3, [0,1,2,3]));
+
+    await instance.makeMove(id, 3, ac0);
+    await instance.makeMove(id, 2, ac1);
+    await instance.makeMove(id, 4, ac0);
+    await instance.makeMove(id, 1, ac1);
+    await instance.makeMove(id, 5, ac0);
+    await instance.makeMove(id, 0, ac1);
+    await instance.makeMove(id, 6, ac0);
+    await assertWillRevert(()=>
+       instance.makeMoveAndClaimVictory(id, 7, [3,4,5,6], {from:accounts[1],gasPrice:0}));
+
+    await assertWillRevert(()=>
+       instance.makeMoveAndClaimVictory(id, 7, [0,1,2,3], {from:accounts[1],gasPrice:0}));
+
+  })
+
+  it('should deny claiming victory when pieces do not line up', async function(){
+
+    var instance = await ConnectFour.deployed();
+
+    const ac0 = {from:accounts[0]};
+    const ac1 = {from:accounts[1]};
+
+    var id = await createAndJoinGame(instance, payment, accounts[0], accounts[1]);
+
+    /*
+    * * * * * * *
+    * * * * * * *
+    * * * * * * *
+    * * * * R R *
+    * * * R B B *
+    * * R B B R *
+    */
+
+    await instance.makeMove(id, 2, ac0);
+    await instance.makeMove(id, 3, ac1);
+    await instance.makeMove(id, 10, ac0);
+    await instance.makeMove(id, 4, ac1);
+    await instance.makeMove(id, 5, ac0);
+    await instance.makeMove(id, 11, ac1);
+    await instance.makeMove(id, 18, ac0);
+    await instance.makeMove(id, 12, ac1);
+
+    await assertWillRevert(()=>
+       instance.makeMoveAndClaimVictory(id, 19, [2,10,18,19], ac0));
+
+
+  });
+
+  it('should deny claiming victory when there is a break between two pieces', async function(){
+    var instance = await ConnectFour.deployed();
+
+    const ac0 = {from:accounts[0]};
+    const ac1 = {from:accounts[1]};
+
+    var id = await createAndJoinGame(instance, payment, accounts[0], accounts[1]);
+
+    /*
+    * * * * * * *
+    * * * * * * *
+    * * * * * * *
+    * * * * * * *
+    B * B * B * *
+    R * R * R * R
+    */
+
+    await instance.makeMove(id, 0, ac0);
+    await instance.makeMove(id, 7, ac1);
+    await instance.makeMove(id, 2, ac0);
+    await instance.makeMove(id, 9, ac1);
+    await instance.makeMove(id, 4, ac0);
+    await instance.makeMove(id, 11, ac1);
+    await assertWillRevert(()=>
+       instance.makeMoveAndClaimVictory(id, 6, [0,2,4,6], ac0));
+
+
+
+
+  });
+
+  it('should deny claiming victory when pieces wrap around', async function(){
+    var instance = await ConnectFour.deployed();
+
+    const ac0 = {from:accounts[0]};
+    const ac1 = {from:accounts[1]};
+
+    //Straight line
+    var id = await createAndJoinGame(instance, payment, accounts[0], accounts[1]);
+
+    /*
+    * * * * * * *
+    * * * * * * *
+    * * * * * * *
+    * * * * * * *
+    R R R * * * *
+    B B B * * * R
+    */
+
+    await instance.makeMove(id, 6, ac0);
+    await instance.makeMove(id, 0, ac1);
+    await instance.makeMove(id, 7, ac0);
+    await instance.makeMove(id, 1, ac1);
+    await instance.makeMove(id, 8, ac0);
+    await instance.makeMove(id, 2, ac1);
+    await assertWillRevert(()=>
+       instance.makeMoveAndClaimVictory(id, 9, [6,7,8,9], ac0));
+
+
+    //Diagnol left
+    var id = await createAndJoinGame(instance, payment, accounts[0], accounts[1]);
+
+    /*
+    * * * * * * *
+    * * * * * * *
+    * * * * * * *
+    R * * * * * R
+    B R * * * * B
+    B B R * * * R
+    */
+
+    await instance.makeMove(id, 2, ac0);
+    await instance.makeMove(id, 1, ac1);
+    await instance.makeMove(id, 8, ac0);
+    await instance.makeMove(id, 0, ac1);
+    await instance.makeMove(id, 6, ac0);
+    await instance.makeMove(id, 7, ac1);
+    await instance.makeMove(id, 14, ac0);
+    await instance.makeMove(id, 13, ac1);
+    await assertWillRevert(()=>
+       instance.makeMoveAndClaimVictory(id, 20, [2,8,14,20], ac0));
+
+    //Diagnol right
+    var id = await createAndJoinGame(instance, payment, accounts[0], accounts[1]);
+
+    /*
+    * * * * * * *
+    * R * * * * *
+    R R * * * * *
+    B B * * * * *
+    B R * * * * R
+    B R * B * R B
+    */
+
+    await instance.makeMove(id, 5, ac0);
+    await instance.makeMove(id, 6, ac1);
+    await instance.makeMove(id, 13, ac0);
+    await instance.makeMove(id, 0, ac1);
+    await instance.makeMove(id, 1, ac0);
+    await instance.makeMove(id, 7, ac1);
+    await instance.makeMove(id, 8, ac0);
+    await instance.makeMove(id, 14, ac1);
+    await instance.makeMove(id, 21, ac0);
+    await instance.makeMove(id, 15, ac1);
+    await instance.makeMove(id, 22, ac0);
+    await instance.makeMove(id, 3, ac1);
+    await assertWillRevert(()=>
+       instance.makeMoveAndClaimVictory(id, 29, [5,13,21,29], ac0));
+  });
+
+
 
 });

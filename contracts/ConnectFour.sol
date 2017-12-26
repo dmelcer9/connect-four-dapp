@@ -7,6 +7,8 @@ import "../node_modules/zeppelin-solidity/contracts/payment/PullPayment.sol";
 contract ConnectFour is PullPayment {
 
   enum BoardPiece {NONE, RED, BLACK}
+
+  //Encapsulates total game lead.
   struct GameState {
     uint bid; //How much each player bids
     uint lastTimePlayed; //When was the last move made?
@@ -33,10 +35,15 @@ contract ConnectFour is PullPayment {
   event logGameStart(uint gameId);
   event logMoveMade(uint gameId, BoardPiece who, uint8 position);
   event logGameEnd(uint gameId, address winner);
+  event logGameCancel(uint gameId);
 
+  //How long someone has to move before the other player can claim victory
   uint public moveTimeout;
+
+  //Counter so each game has a unique ID
   uint nextID;
 
+  //The state of all the games
   mapping (uint => GameState) games;
 
   modifier onlyGameExists(uint gameId) {
@@ -45,7 +52,7 @@ contract ConnectFour is PullPayment {
   }
 
   modifier onlyWhileNotStarted(uint gameId) {
-    require(!games[gameId].isStarted);
+    require(!games[gameId].isStarted && !games[gameId].gameOver);
     _;
   }
 
@@ -60,15 +67,20 @@ contract ConnectFour is PullPayment {
       _;
   }
 
+  //Only the player whose turn it is
   modifier onlyActivePlayer(uint gameId) {
     require(msg.sender == getActivePlayer(gameId));
-
     _;
   }
 
+  //Only the player whose turn it isn't
   modifier onlyInactivePlayer(uint gameId) {
     require(msg.sender == getInactivePlayer(gameId));
+    _;
+  }
 
+  modifier onlyGameCreator(uint gameId) {
+    require(msg.sender == games[gameId].playerOneRed);
     _;
   }
 
@@ -85,11 +97,13 @@ contract ConnectFour is PullPayment {
     revert();
   }
 
+  //Creates a game with a unique ID. Anyone can join this game.
   function createNewGame() external payable {
     uint gameId = createUniqueId();
     createNewGameEntry(gameId);
   }
 
+  //Creates a game where only a specified player can join.
   function createNewRestrictedGame(address playerTwo) external payable {
     require(playerTwo != msg.sender);
     uint gameId = createUniqueId();
@@ -98,6 +112,7 @@ contract ConnectFour is PullPayment {
     createNewGameEntry(gameId);
   }
 
+  //Join a game that another person has created.
   function joinGame(uint gameId) external payable
     onlyGameExists(gameId)
     onlyWhileNotStarted(gameId)
@@ -115,6 +130,21 @@ contract ConnectFour is PullPayment {
     games[gameId].isStarted = true;
     games[gameId].whoseTurn = BoardPiece.RED;
     logGameStart(gameId);
+  }
+
+  //If nobody has joined your game, you can cancel and get money back
+  function cancelCreatedGame(uint gameId)
+    external
+    onlyGameExists(gameId)
+    onlyWhileNotStarted(gameId)
+    onlyGameCreator(gameId)
+  {
+    games[gameId].isStarted = true;
+    games[gameId].gameOver = true;
+
+    asyncSend(msg.sender, games[gameId].bid);
+
+    logGameCancel(gameId);
   }
 
   function forfeit(uint gameId)
@@ -141,8 +171,25 @@ contract ConnectFour is PullPayment {
     gameEnd(gameId, getInactivePlayer(gameId));
   }
 
-  function makeMove(uint gameId, uint8 position)
+  //The pieces in toClaim must be sorted positions, least to greatest
+  function makeMoveAndClaimVictory(uint gameId, uint8 moveToMake, uint8[4] claim)
     external
+    onlyActivePlayer(gameId)
+    onlyWhilePlaying(gameId)
+  {
+    BoardPiece player = games[gameId].whoseTurn;
+    address playerAddress = getActivePlayer(gameId);
+
+    makeMove(gameId, moveToMake);
+
+    require(checkHasWon(gameId, player, claim));
+
+    gameEnd(gameId,playerAddress);
+  }
+
+  //If the move is valid, make a move on the board
+  function makeMove(uint gameId, uint8 position)
+    public
     onlyActivePlayer(gameId)
     onlyWhilePlaying(gameId)
   {
@@ -166,6 +213,40 @@ contract ConnectFour is PullPayment {
     logMoveMade(gameId, player, position);
   }
 
+  //Is a set of four pieces a valid victory
+  function checkHasWon(uint gameId, BoardPiece who, uint8[4] moves) constant public returns(bool){
+    for (uint8 i = 0; i<4; i++){
+      require(moves[i] >= 0 && moves[i] <= 41);
+      require(games[gameId].board[moves[i]] == who);
+    }
+
+    //First 2 pieces must be in increasing order
+    require(moves[0] < moves[1]);
+    uint8 diff = moves[1] - moves[0];
+
+    //All other pieces must line up the same as the first 2 (and also be increasing)
+    require(moves[2] - moves[1] == diff &&
+            moves[3] - moves[2] == diff);
+
+    //Make sure pieces are in a valid arrangement
+    //And prevent wrap-around
+    if (diff == 1 || diff == 8){
+      //The last piace should be further to the right than the first one
+      require(moves[0] % 7 < moves[3] % 7);
+    } else if (diff == 6){
+      //The last piece should be further to the left than the first one
+      require(moves[3] % 7 < moves[0] % 7);
+    } else if (diff == 7){
+      //Wrap-around isn't a problem with vertical pieces
+    } else{
+      revert();
+    }
+
+    return true;
+
+  }
+
+  //Accessor functions per game
   function getBid(uint gameId) constant public returns(uint) {
     return games[gameId].bid;
   }
@@ -202,6 +283,7 @@ contract ConnectFour is PullPayment {
     return games[gameId].gameOver;
   }
 
+  //Player that is currently going
   function getActivePlayer(uint gameId) constant internal returns(address){
     BoardPiece player = games[gameId].whoseTurn;
 
@@ -214,6 +296,7 @@ contract ConnectFour is PullPayment {
     }
   }
 
+  //Player that is currently not going
   function getInactivePlayer(uint gameId) constant internal returns(address){
     BoardPiece player = games[gameId].whoseTurn;
 
@@ -226,17 +309,19 @@ contract ConnectFour is PullPayment {
     }
   }
 
+  //Increment the game ID and return it
   function createUniqueId() private returns(uint) {
     return nextID++;
   }
 
-
+  //Helper function for game creation
   function createNewGameEntry(uint gameId) private{
     games[gameId].bid = msg.value;
     games[gameId].playerOneRed = msg.sender;
     logGameCreated(gameId, false);
   }
 
+  //Helper function for game end
   function gameEnd(uint gameId, address winner) private {
     games[gameId].gameOver = true;
     uint256 payout = games[gameId].bid * 2;
