@@ -26342,6 +26342,8 @@ module.exports = SolidityEvent;
 "use strict";
 
 
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
 var _web = __webpack_require__(82);
 
 var _web2 = _interopRequireDefault(_web);
@@ -26356,27 +26358,44 @@ var _ConnectFour2 = _interopRequireDefault(_ConnectFour);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
 var ConnectFour = (0, _truffleContract2.default)(_ConnectFour2.default);
 
-window.App = {
-  start: async function start() {
+var ConnectFourApp = function () {
+  function ConnectFourApp(web3Inst) {
+    _classCallCheck(this, ConnectFourApp);
+
     ConnectFour.setProvider(web3.currentProvider);
-    console.log((await ConnectFour.deployed()));
+    ConnectFour.deployed().then(function (deployed) {
+      console.log("Connected to contract");
+      this.c4inst = deployed;
+    }).catch(displayError);
   }
-};
+
+  _createClass(ConnectFourApp, [{
+    key: 'displayError',
+    value: function displayError(error) {
+      console.error(error);
+    }
+  }]);
+
+  return ConnectFourApp;
+}();
 
 window.addEventListener('load', function () {
+  var web3used;
+
   // Checking if Web3 has been injected by the browser (Mist/MetaMask)
   if (typeof web3 !== 'undefined') {
-    console.warn("Using web3 detected from external source. If you find that your accounts don't appear or you have 0 MetaCoin, ensure you've configured that source properly. If using MetaMask, see the following link. Feel free to delete this warning. :) http://truffleframework.com/tutorials/truffle-and-metamask");
     // Use Mist/MetaMask's provider
-    window.web3 = new _web2.default(web3.currentProvider);
+    web3used = new _web2.default(web3.currentProvider);
   } else {
     console.log("No web3 detected");
-    window.web3 = new _web2.default(new _web2.default.providers.HttpProvider("http://127.0.0.1:7545"));
+    web3used = new _web2.default(new _web2.default.providers.HttpProvider("http://127.0.0.1:7545"));
   }
 
-  App.start();
+  new ConnectFourApp(web3used);
 });
 
 /***/ }),

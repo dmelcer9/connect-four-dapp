@@ -5,24 +5,36 @@ import contract from 'truffle-contract'
 import con4_artifacts from '../../build/contracts/ConnectFour.json'
 const ConnectFour = contract(con4_artifacts);
 
-window.App = {
-  start: async function(){
+class ConnectFourApp{
+
+  constructor(web3Inst){
     ConnectFour.setProvider(web3.currentProvider);
-    console.log(await ConnectFour.deployed());
+    ConnectFour.deployed()
+      .then(function(deployed){
+        console.log("Connected to contract")
+        this.c4inst = deployed;
+      }).catch(displayError);
+  }
+
+  displayError(error){
+    console.error(error);
   }
 }
 
 
+
+
 window.addEventListener('load', function() {
+  var web3used;
+
   // Checking if Web3 has been injected by the browser (Mist/MetaMask)
   if (typeof web3 !== 'undefined') {
-    console.warn("Using web3 detected from external source. If you find that your accounts don't appear or you have 0 MetaCoin, ensure you've configured that source properly. If using MetaMask, see the following link. Feel free to delete this warning. :) http://truffleframework.com/tutorials/truffle-and-metamask")
     // Use Mist/MetaMask's provider
-    window.web3 = new Web3(web3.currentProvider);
+    web3used = new Web3(web3.currentProvider);
   } else {
     console.log("No web3 detected");
-    window.web3 = new Web3(new Web3.providers.HttpProvider("http://127.0.0.1:7545"));
+    web3used = new Web3(new Web3.providers.HttpProvider("http://127.0.0.1:7545"));
   }
 
-  App.start();
+  new ConnectFourApp(web3used);
 });
