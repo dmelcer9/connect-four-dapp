@@ -4,9 +4,7 @@ var ExtractTextPlugin = require("extract-text-webpack-plugin");
 var path = require('path');
 
 module.exports = {
-  entry: {
-    test:'./test/connectfour.js'
-  },
+  entry: './app/script/main.js',
   output: {
     path: path.join(__dirname, 'dist'),
     filename: 'app.js'
@@ -16,7 +14,7 @@ module.exports = {
       { test: /\.(js|jsx|es6)$/, exclude: /node_modules/, loader: "babel-loader"},
       { test: /\.scss$/i, loader: ExtractTextPlugin.extract(["css", "sass"])},
       { test: /\.json$/i, loader: "json-loader"},
-      { test: /\.sol/, loader: 'truffle-solidity' }
+      { test: /\.sol/, loader: 'truffle-solidity-loader' }
     ]
   },
   plugins: [
