@@ -8,7 +8,8 @@
   },
   "scripts": {
     "build": "webpack",
-    "test": "webpack && truffle test"
+    "dw": "truffle deploy --network ganache && webpack",
+    "test": "truffle deploy --network ganache && truffle test --network ganache"
   },
   "repository": {
     "type": "git",
@@ -30,6 +31,7 @@
     "babel-loader": "^7.1.2",
     "copy-webpack-plugin": "^4.3.1",
     "extract-text-webpack-plugin": "^3.0.2",
+    "ganache-cli": "^6.0.3",
     "truffle-contract": "^3.0.1",
     "truffle-solidity-loader": "0.0.8",
     "webpack": "^3.10.0",
