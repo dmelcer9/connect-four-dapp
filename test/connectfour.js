@@ -1,11 +1,13 @@
-const assertRevert = require('../node_modules/zeppelin-solidity/test/helpers/assertRevert');
-const moment = require('../node_modules/moment/min/moment.min');
+import assertRevert from 'zeppelin-solidity/test/helpers/assertRevert';
+//import increaseTime from 'zeppelin-solidity/test/helpers/increaseTime'
+import moment from 'moment';
 
 const ethNow =  function() {
   return web3.eth.getBlock('latest').timestamp;
 }
 
-const increaseTime = require('./increaseTime');
+import increaseTime from './increaseTime';
+
 var ConnectFour = artifacts.require("ConnectFour");
 
 const logErrAndAssertFalse = function (error){
