@@ -3,17 +3,21 @@ import BoardPiece from "./boardPiece"
 import PropTypes from "prop-types"
 import BigNumber from "bignumber.js"
 
+const BOARD_WIDTH = 7;
+const BOARD_HEIGHT = 6;
+const BOARD_AREA = BOARD_WIDTH * BOARD_HEIGHT;
+
 export default class Board extends React.Component{
   constructor(props){
     super(props);
-    var arr = new Array(42);
+    var arr = new Array(BOARD_AREA);
     arr.fill(0);
 
     this.state = {board:arr, loading:true};
   }
 
   async refreshBoard(){
-    
+
   }
 
   handleClick(id){
@@ -33,10 +37,10 @@ export default class Board extends React.Component{
     }
 
     var board = [];
-    for(var rowNum = 5; rowNum >= 0; rowNum--){
+    for(var rowNum = BOARD_HEIGHT - 1; rowNum >= 0; rowNum--){
       var row = []
-      for(var col = 0; col <= 6; col++){
-        let cellId = (rowNum * 7) + col;
+      for(var col = 0; col < BOARD_WIDTH; col++){
+        let cellId = (rowNum * BOARD_WIDTH) + col;
         var cellColor = this.state.board[cellId];
         row.push(
           <BoardPiece key={cellId} color={cellColor} chandler={()=>this.handleClick(cellId)}/>
