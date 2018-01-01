@@ -819,34 +819,9 @@
     "5777": {
       "events": {},
       "links": {},
-      "address": "0x8cdaf0cd259887258bc13a92c0a6da92698644c0"
-    },
-    "1514751831133": {
-      "events": {},
-      "links": {},
-      "address": "0x0954f59881dbf25c603bdaa0e8500235eca2d285"
-    },
-    "1514752160100": {
-      "events": {},
-      "links": {},
-      "address": "0xcc3243ad7e2f4de744d6acb1cbe09067833acde5"
-    },
-    "1514752429925": {
-      "events": {},
-      "links": {},
-      "address": "0x8cdaf0cd259887258bc13a92c0a6da92698644c0"
-    },
-    "1514752651248": {
-      "events": {},
-      "links": {},
-      "address": "0x8cdaf0cd259887258bc13a92c0a6da92698644c0"
-    },
-    "1514758242657": {
-      "events": {},
-      "links": {},
-      "address": "0x8cdaf0cd259887258bc13a92c0a6da92698644c0"
+      "address": "0x30753e4a8aad7f8597332e813735def5dd395028"
     }
   },
   "schemaVersion": "1.0.1",
-  "updatedAt": "2017-12-31T22:11:19.761Z"
+  "updatedAt": "2018-01-01T00:02:04.701Z"
 }

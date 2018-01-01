@@ -44,7 +44,7 @@ contract ConnectFour is PullPayment {
   uint nextID;
 
   //The state of all the games
-  mapping (uint => GameState) games;
+  mapping (uint => GameState) public games;
 
   modifier onlyGameExists(uint gameId) {
     require(games[gameId].playerOneRed != 0);

@@ -8,8 +8,8 @@ const ConnectFour = contract(con4_artifacts);
 class ConnectFourApp{
 
   constructor(web3Inst){
-    this.web3i = web3Inst;
-    ConnectFour.setProvider(this.web3i.currentProvider);
+    this.web3 = web3Inst;
+    ConnectFour.setProvider(this.web3.currentProvider);
     ConnectFour.deployed()
       .then(deployed => {
         console.log("Connected to contract")
@@ -22,15 +22,17 @@ class ConnectFourApp{
 
     var t = this.c4inst;
     document.getElementById("getInfo").addEventListener("click", async ()=>{
-      var acc = (await this.web3i.eth.getAccounts())[0];
-      console.log(this.web3i);
-      console.log(acc);
-      await t.createNewGame({from:acc,value:"10000000"});
-      console.log("Test");
+      var acc = (await this.web3.eth.getAccounts())[0];
       var num = document.getElementById("idnum").value;
-      var arr = await t.getPlayerOne.call(num);
+      var arr = await t.games.call(num,{from:acc});
+      console.log(arr);
+    });
 
-    })
+    document.getElementById("createGame").addEventListener("click", async ()=>{
+      var acc = (await this.web3.eth.getAccounts())[0];
+      var txn = await t.createNewGame({from:acc,value:this.web3.utils.toWei(".01","ether")});
+      console.log("Created game " + txn.logs[0].args.gameId.toString());
+    });
   }
 
   displayError(error){
