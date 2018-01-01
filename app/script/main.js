@@ -11,6 +11,7 @@ import BoardPiece from './components/boardPiece'
 import Board from './components/board'
 import React from 'react'
 import ReactDOM from 'react-dom'
+import BigNumber from "bignumber.js"
 
 class ConnectFourApp{
 
@@ -47,7 +48,7 @@ class ConnectFourApp{
   }
 }
 
-window.addEventListener('load', function() {
+window.addEventListener('load', async function() {
   var web3used;
 
   // Checking if Web3 has been injected by the browser (Mist/MetaMask)
@@ -61,9 +62,14 @@ window.addEventListener('load', function() {
   }
 
   new ConnectFourApp(web3used);
-});
 
-ReactDOM.render(
-  <Board />,
-  document.getElementById("root")
-)
+  ConnectFour.setProvider(web3.currentProvider);
+
+  var inst = await ConnectFour.deployed();
+
+  ReactDOM.render(
+    <Board gameId={new BigNumber("0")} contract={inst}/>,
+    document.getElementById("root")
+  )
+
+});
