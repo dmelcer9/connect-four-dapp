@@ -1,9 +1,16 @@
 var Web3 = require("web3");
 
+require("../app.css")
+
 import contract from 'truffle-contract'
 
 import con4_artifacts from '../../build/contracts/ConnectFour.json'
 const ConnectFour = contract(con4_artifacts);
+
+import BoardPiece from './components/boardPiece'
+import Board from './components/board'
+import React from 'react'
+import ReactDOM from 'react-dom'
 
 class ConnectFourApp{
 
@@ -55,3 +62,8 @@ window.addEventListener('load', function() {
 
   new ConnectFourApp(web3used);
 });
+
+ReactDOM.render(
+  <Board />,
+  document.getElementById("root")
+)
