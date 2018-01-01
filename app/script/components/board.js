@@ -31,6 +31,12 @@ export default class Board extends React.Component{
   }
 
   handleClick(id){
+
+    //If loading, ignore clicks
+    if(this.state.loading){
+      return;
+    }
+
     console.log("Clicked " + String(id));
     this.setState(prevState=>{
       prevState.loading = true;
@@ -42,7 +48,7 @@ export default class Board extends React.Component{
       return prevState;
     })
 
-    
+
 
     this.refreshBoard();
   }
