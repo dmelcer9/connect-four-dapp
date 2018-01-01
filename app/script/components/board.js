@@ -17,17 +17,34 @@ export default class Board extends React.Component{
   }
 
   async refreshBoard(){
+    const gameId = this.props.gameId;
+    const account = this.props.account;
+    const c4inst = this.props.c4inst;
 
+    var board = await c4inst.getBoard.call(gameId,{from:account});
+    var boardNums = board.map(bignum=>bignum.toNumber());
+    this.setState(prevState=>{
+      prevState.board = boardNums;
+      prevState.loading = false;
+      return prevState;
+    })
   }
 
   handleClick(id){
     console.log("Clicked " + String(id));
     this.setState(prevState=>{
+      prevState.loading = true;
+
       let prevColor = prevState.board[id];
       let newColor = (prevColor+1) % 3;
       prevState.board[id] = newColor;
+
       return prevState;
     })
+
+    
+
+    this.refreshBoard();
   }
 
   render(){
@@ -62,6 +79,6 @@ export default class Board extends React.Component{
 
 Board.propTypes = {
   gameId: PropTypes.instanceOf(BigNumber).isRequired,
-  contract: PropTypes.any.isRequired
-
+  c4inst: PropTypes.any.isRequired,
+  account: PropTypes.string.isRequired
 }

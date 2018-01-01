@@ -63,12 +63,17 @@ window.addEventListener('load', async function() {
 
   new ConnectFourApp(web3used);
 
-  ConnectFour.setProvider(web3.currentProvider);
+  ConnectFour.setProvider(web3used.currentProvider);
+
 
   var inst = await ConnectFour.deployed();
 
+  var account = (await web3used.eth.getAccounts())[0]
+  console.log(account);
+
+
   ReactDOM.render(
-    <Board gameId={new BigNumber("0")} contract={inst}/>,
+    <Board gameId={new BigNumber("0")} c4inst={inst} account={account}/>,
     document.getElementById("root")
   )
 
