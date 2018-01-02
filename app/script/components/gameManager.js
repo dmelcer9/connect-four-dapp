@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import BigNumber from 'bignumber.js'
 
 const LOADING_GAME_MESSAGE = "Loading Details...";
+const NULL_ADDR = "0x0000000000000000000000000000000000000000";
 
 export default class GameManager extends React.Component{
   constructor(props){
@@ -11,7 +12,7 @@ export default class GameManager extends React.Component{
     this.state = {
       inputBid: 0.01,
       inputRestrictedAddress: "",
-      inputGameId: 0,
+      inputGameId: 1,
       statusText: LOADING_GAME_MESSAGE
     }
 
@@ -19,6 +20,38 @@ export default class GameManager extends React.Component{
   }
 
   async updateStatusText(){
+    const gameId = String(this.state.inputGameId);
+
+    const fromac = {from: this.props.account};
+    const c4inst = this.props.c4inst;
+
+    const p1 = (await c4inst.getPlayerOne.call(gameId,fromac)).toLowerCase();
+    const p2 = (await c4inst.getPlayerTwo.call(gameId,fromac)).toLowerCase();
+
+    const isRestricted = await c4inst.getRestricted.call(gameId, fromac);
+    const isStarted = await c4inst.getIsStarted.call(gameId, fromac);
+    const gameOver = await c4inst.getGameOver.call(gameId, fromac);
+
+    if(p1 === NULL_ADDR){
+      this.setStatusText("Game ID " + gameId + " does not exist.");
+      return;
+    } else if(p2 === NULL_ADDR){
+      if(p1 === this.props.account){
+        this.setStatusText("You created this game!");
+      } else {
+        this.setStatusText("Game ID " + gameId + " is available to join");
+      }
+    } else if(isRestricted && !isStarted){
+      if(p2 === this.props.account){
+        this.setStatusText("Restricted game " + gameId + " is available to join");
+      } else{
+        this.setStatusText("This game is restricted.");
+      }
+    } else if(isStarted && !gameOver){
+      this.setStatusText("Game ID " + gameId + " in progress.");
+    } else{
+      this.setStatusText("Game " + gameId + " over.");
+    }
 
   }
 

@@ -67,11 +67,11 @@ window.addEventListener('load', async function() {
   var inst = await ConnectFour.deployed();
 
   var account = (await web3used.eth.getAccounts())[0]
-  console.log(account);
+//  console.log(account);
 
 
   ReactDOM.render(
-    <ConnectFourApp gameId={new BigNumber("0")} c4inst={inst} account={account} web3={web3used}/>,
+    <ConnectFourApp gameId={new BigNumber("0")} c4inst={inst} account={account.toLowerCase()} web3={web3used}/>,
     document.getElementById("root")
   )
 

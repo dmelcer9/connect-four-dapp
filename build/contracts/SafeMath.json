@@ -1,15 +1,15 @@
 {
   "contractName": "SafeMath",
   "abi": [],
-  "bytecode": "0x60606040523415600e57600080fd5b603580601b6000396000f3006060604052600080fd00a165627a7a7230582006097f61dee1e5597cae465fdd47fe099e82310c6eca8fc710b88254dbfe6d280029",
-  "deployedBytecode": "0x6060604052600080fd00a165627a7a7230582006097f61dee1e5597cae465fdd47fe099e82310c6eca8fc710b88254dbfe6d280029",
+  "bytecode": "0x60606040523415600e57600080fd5b603580601b6000396000f3006060604052600080fd00a165627a7a7230582053c206a15373f3779d3c61d285fa226fcd257de7efb4a9acf56c14c1cb79f3630029",
+  "deployedBytecode": "0x6060604052600080fd00a165627a7a7230582053c206a15373f3779d3c61d285fa226fcd257de7efb4a9acf56c14c1cb79f3630029",
   "sourceMap": "117:712:2:-;;;;;;;;;;;;;;;;;",
   "deployedSourceMap": "117:712:2:-;;;;;",
   "source": "pragma solidity ^0.4.18;\n\n\n/**\n * @title SafeMath\n * @dev Math operations with safety checks that throw on error\n */\nlibrary SafeMath {\n  function mul(uint256 a, uint256 b) internal pure returns (uint256) {\n    if (a == 0) {\n      return 0;\n    }\n    uint256 c = a * b;\n    assert(c / a == b);\n    return c;\n  }\n\n  function div(uint256 a, uint256 b) internal pure returns (uint256) {\n    // assert(b > 0); // Solidity automatically throws when dividing by 0\n    uint256 c = a / b;\n    // assert(a == b * c + a % b); // There is no case in which this doesn't hold\n    return c;\n  }\n\n  function sub(uint256 a, uint256 b) internal pure returns (uint256) {\n    assert(b <= a);\n    return a - b;\n  }\n\n  function add(uint256 a, uint256 b) internal pure returns (uint256) {\n    uint256 c = a + b;\n    assert(c >= a);\n    return c;\n  }\n}\n",
-  "sourcePath": "/home/dmelcer9/ethdev/c4/node_modules/zeppelin-solidity/contracts/math/SafeMath.sol",
+  "sourcePath": "C:\\Users\\dmelc\\ethdev\\c4\\node_modules\\zeppelin-solidity\\contracts\\math\\SafeMath.sol",
   "ast": {
     "attributes": {
-      "absolutePath": "/home/dmelcer9/ethdev/c4/node_modules/zeppelin-solidity/contracts/math/SafeMath.sol",
+      "absolutePath": "/C/Users/dmelc/ethdev/c4/node_modules/zeppelin-solidity/contracts/math/SafeMath.sol",
       "exportedSymbols": {
         "SafeMath": [
           1190
@@ -1343,5 +1343,5 @@
   },
   "networks": {},
   "schemaVersion": "1.0.1",
-  "updatedAt": "2018-01-02T01:39:11.977Z"
+  "updatedAt": "2018-01-02T06:58:09.657Z"
 }
