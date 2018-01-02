@@ -24,7 +24,7 @@ export default class GameManager extends React.Component{
       statusText: DEFAULT_STATUS,
       joinButtonText: "Join Game",
       joinButtonDisabled: true,
-      joinAction: "None"
+      joinAction: "None",
     }
 
   }
@@ -50,6 +50,9 @@ export default class GameManager extends React.Component{
     const isRestricted = await c4inst.getRestricted.call(gameId, fromac);
     const isStarted = await c4inst.getIsStarted.call(gameId, fromac);
     const gameOver = await c4inst.getGameOver.call(gameId, fromac);
+    const bid = String(await c4inst.getBid.call(gameId, fromac));
+    const bidHuman = this.props.web3.utils.fromWei(bid, "ether").toString();
+
 
     var statusText = "Game ID " + gameId + ": ";
     var buttonDisabled = true;
@@ -85,6 +88,7 @@ export default class GameManager extends React.Component{
           joinAction = "Join";
         }
       }
+      statusText += " Bid is " + bidHuman + " ether.";
     } else if(isStarted && !gameOver){
 
     } else{
@@ -113,6 +117,7 @@ export default class GameManager extends React.Component{
       var inputBidNum = String(this.state.inputBid);
       console.log(inputBidNum);
       value = this.props.web3.utils.toWei(inputBidNum,"ether");
+      console.log(value);
     } catch(error){
       console.error(error);
       this.setStatusText("Please enter a valid bid.");
@@ -155,9 +160,16 @@ export default class GameManager extends React.Component{
     setTimeout(()=>this.updateStatusText(), 0);
   }
 
+  updateInputBid(event){
+    this.setState({
+      inputBid: event.target.value
+    });
+  }
+
   render(){
     return (
       <div id="gameManager">
+        <input type="number" value={this.state.inputBid} onChange={e=>this.updateInputBid(e)} />
         <button onClick={()=>this.createGame()}>Create Game</button>
         <input type="number" value={this.state.inputGameId} onChange={e=>this.updateInputGameId(e)} />
         <p>{this.state.statusText}</p>
