@@ -2,6 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import Board from './board'
 import BigNumber from 'bignumber.js'
+import GameManager from './gameManager'
 
 export default class ConnectFourApp extends React.Component{
   constructor(props){
@@ -23,9 +24,14 @@ export default class ConnectFourApp extends React.Component{
 
     var r = (
       <div id="app">
+        <GameManager c4inst={this.props.c4inst}
+                     account={this.props.account}
+                     gameAdd={num=>this.addGame(num)}
+                     web3={this.props.web3}/>
+
         {Array.from(this.state.games).map(gameId=>{
           return (
-            <Board gameId={gameId} c4inst={this.props.c4inst} account={this.props.account} />
+            <Board gameId={gameId} key={gameId} c4inst={this.props.c4inst} account={this.props.account}/>
           )
         })}
       </div>
@@ -36,5 +42,6 @@ export default class ConnectFourApp extends React.Component{
 
 ConnectFourApp.propTypes = {
   c4inst: PropTypes.any.isRequired,
-  account: PropTypes.string.isRequired
+  account: PropTypes.string.isRequired,
+  web3: PropTypes.any.isRequired
 }

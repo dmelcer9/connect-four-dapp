@@ -71,7 +71,7 @@ window.addEventListener('load', async function() {
 
 
   ReactDOM.render(
-    <ConnectFourApp gameId={new BigNumber("0")} c4inst={inst} account={account}/>,
+    <ConnectFourApp gameId={new BigNumber("0")} c4inst={inst} account={account} web3={web3used}/>,
     document.getElementById("root")
   )
 

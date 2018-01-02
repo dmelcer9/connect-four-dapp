@@ -86,7 +86,7 @@ export default class Board extends React.Component{
 }
 
 Board.propTypes = {
-  gameId: PropTypes.instanceOf(BigNumber).isRequired,
+  gameId: PropTypes.any.isRequired,
   c4inst: PropTypes.any.isRequired,
   account: PropTypes.string.isRequired
 }
