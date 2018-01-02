@@ -13,7 +13,9 @@ export default class GameManager extends React.Component{
       inputBid: 0.01,
       inputRestrictedAddress: "",
       inputGameId: 1,
-      statusText: LOADING_GAME_MESSAGE
+      statusText: LOADING_GAME_MESSAGE,
+      joinButtonText: "Join Game",
+      joinButtonDisabled: true
     }
 
     this.updateStatusText();
@@ -92,15 +94,34 @@ export default class GameManager extends React.Component{
       this.props.gameAdd(createdId);
     } catch(error){
       console.error(error);
-      this.setStatusText("There was some sort of error. Check the transaction history to see what happened");
+      this.setStatusText("There was some sort of error. "+
+          "Check the transaction history to see what happened");
     }
+  }
+
+  async handleJoinButton(){
+
+  }
+
+  updateInputGameId(event){
+    this.setState({
+      inputGameId: event.target.value,
+      statusText: LOADING_GAME_MESSAGE
+    });
+
+    //Displays the previous info if incorrect
+    setTimeout(()=>this.updateStatusText(), 0);
   }
 
   render(){
     return (
       <div id="gameManager">
         <button onClick={()=>this.createGame()}>Create Game</button>
+        <input type="number" value={this.state.inputGameId} onChange={e=>this.updateInputGameId(e)} />
         <p>{this.state.statusText}</p>
+        <button onClick={()=>this.handleJoinButton()} disabled={this.state.joinButtonDisabled}>
+          {this.state.joinButtonText}
+        </button>
       </div>);
   }
 }
