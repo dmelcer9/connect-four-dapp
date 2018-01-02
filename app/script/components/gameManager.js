@@ -168,14 +168,25 @@ export default class GameManager extends React.Component{
 
   render(){
     return (
-      <div id="gameManager">
-        <input type="number" value={this.state.inputBid} onChange={e=>this.updateInputBid(e)} />
-        <button onClick={()=>this.createGame()}>Create Game</button>
-        <input type="number" value={this.state.inputGameId} onChange={e=>this.updateInputGameId(e)} />
-        <p>{this.state.statusText}</p>
-        <button onClick={()=>this.handleJoinButton()} disabled={this.state.joinButtonDisabled}>
-          {this.state.joinButtonText}
-        </button>
+      <div id="gameManager" class="game-card">
+        <div class="options-box">
+          <div class="options">
+            Bid: <input type="number" value={this.state.inputBid} onChange={e=>this.updateInputBid(e)} />
+          </div>
+          <button onClick={()=>this.createGame()}>Create Game</button>
+        </div>
+        <div iclass="options-box">
+          <div class="options">
+            Game ID: <input type="number" value={this.state.inputGameId} onChange={e=>this.updateInputGameId(e)} />
+          </div>
+
+          <button onClick={()=>this.handleJoinButton()} disabled={this.state.joinButtonDisabled}>
+            {this.state.joinButtonText}
+          </button>
+        </div>
+
+        <div id="statusText">{this.state.statusText}</div>
+
       </div>);
   }
 }
