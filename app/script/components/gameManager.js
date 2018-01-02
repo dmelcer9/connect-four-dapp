@@ -4,6 +4,14 @@ import BigNumber from 'bignumber.js'
 
 const LOADING_GAME_MESSAGE = "Loading Details...";
 const NULL_ADDR = "0x0000000000000000000000000000000000000000";
+const DEFAULT_STATUS = "Enter a Game ID or create a new game.";
+
+/*
+JoinAction is one of:
+- "None": does nothing when the button is pressed
+- "Load": adds the game with gameAdd prop
+- "Join": sends a transaction to join the game and then adds with gameAdd
+*/
 
 export default class GameManager extends React.Component{
   constructor(props){
@@ -12,17 +20,26 @@ export default class GameManager extends React.Component{
     this.state = {
       inputBid: 0.01,
       inputRestrictedAddress: "",
-      inputGameId: 1,
-      statusText: LOADING_GAME_MESSAGE,
+      inputGameId: "",
+      statusText: DEFAULT_STATUS,
       joinButtonText: "Join Game",
-      joinButtonDisabled: true
+      joinButtonDisabled: true,
+      joinAction: "None"
     }
 
-    this.updateStatusText();
   }
 
   async updateStatusText(){
     const gameId = String(this.state.inputGameId);
+
+    if(gameId === "") {
+      this.setState({
+        statusText: DEFAULT_STATUS,
+        joinButtonDisabled : true,
+        joinButtonText: "Join Game",
+      });
+      return;
+    }
 
     const fromac = {from: this.props.account};
     const c4inst = this.props.c4inst;
@@ -34,26 +51,51 @@ export default class GameManager extends React.Component{
     const isStarted = await c4inst.getIsStarted.call(gameId, fromac);
     const gameOver = await c4inst.getGameOver.call(gameId, fromac);
 
-    if(p1 === NULL_ADDR){
-      this.setStatusText("Game ID " + gameId + " does not exist.");
-      return;
-    } else if(p2 === NULL_ADDR){
-      if(p1 === this.props.account){
-        this.setStatusText("You created this game!");
-      } else {
-        this.setStatusText("Game ID " + gameId + " is available to join");
-      }
-    } else if(isRestricted && !isStarted){
-      if(p2 === this.props.account){
-        this.setStatusText("Restricted game " + gameId + " is available to join");
+    var statusText = "Game ID " + gameId + ": ";
+    var buttonDisabled = true;
+    var buttonText = "Join Game";
+    var joinAction = "None";
+
+    if(!isStarted){
+      if(p1 === NULL_ADDR){
+        //Hasn't been created
+        statusText += "Game Doesn't Exist.";
+      } else if(p1 === this.props.account){
+        //Created by user
+        statusText += "You created this game.";
+        if(isRestricted){
+          statusText += "Player 2 is restricted to " + p2;
+        }
+        buttonText = "Load Game";
+        buttonDisabled = false;
+        joinAction = "Load";
       } else{
-        this.setStatusText("This game is restricted.");
+        //Created by someone else
+        if(isRestricted){
+          if(p2 === this.props.account){
+            statusText += "Restricted game is available to join.";
+            buttonDisabled = false;
+            joinAction = "Join";
+          } else{
+            statusText += "Game is restricted to another player: " + p2;
+          }
+        } else{
+          statusText += "Game is available to join.";
+          buttonDisabled = false;
+          joinAction = "Join";
+        }
       }
     } else if(isStarted && !gameOver){
-      this.setStatusText("Game ID " + gameId + " in progress.");
+
     } else{
-      this.setStatusText("Game " + gameId + " over.");
+
     }
+
+    this.setState({
+      statusText: statusText,
+      joinButtonDisabled : buttonDisabled,
+      joinButtonText: buttonText,
+    });
 
   }
 
