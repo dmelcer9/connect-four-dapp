@@ -7,13 +7,13 @@ import contract from 'truffle-contract'
 import con4_artifacts from '../../build/contracts/ConnectFour.json'
 const ConnectFour = contract(con4_artifacts);
 
-import BoardPiece from './components/boardPiece'
+import ConnectFourApp from './components/connectFourApp'
 import Board from './components/board'
 import React from 'react'
 import ReactDOM from 'react-dom'
 import BigNumber from "bignumber.js"
 
-class ConnectFourApp{
+/*class ConnectFourApp{
 
   constructor(web3Inst){
     this.web3 = web3Inst;
@@ -46,7 +46,7 @@ class ConnectFourApp{
   displayError(error){
     console.error(error);
   }
-}
+}*/
 
 window.addEventListener('load', async function() {
   var web3used;
@@ -61,8 +61,6 @@ window.addEventListener('load', async function() {
     console.error("No web3 detected");
   }
 
-  new ConnectFourApp(web3used);
-
   ConnectFour.setProvider(web3used.currentProvider);
 
 
@@ -73,7 +71,7 @@ window.addEventListener('load', async function() {
 
 
   ReactDOM.render(
-    <Board gameId={new BigNumber("0")} c4inst={inst} account={account}/>,
+    <ConnectFourApp gameId={new BigNumber("0")} c4inst={inst} account={account}/>,
     document.getElementById("root")
   )
 

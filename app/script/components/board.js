@@ -1,7 +1,7 @@
-import React from "react"
-import BoardPiece from "./boardPiece"
-import PropTypes from "prop-types"
-import BigNumber from "bignumber.js"
+import React from 'react'
+import BoardPiece from './boardPiece'
+import PropTypes from 'prop-types'
+import BigNumber from 'bignumber.js'
 
 const BOARD_WIDTH = 7;
 const BOARD_HEIGHT = 6;
@@ -14,6 +14,8 @@ export default class Board extends React.Component{
     arr.fill(0);
 
     this.state = {board:arr, loading:true};
+
+    this.refreshBoard();
   }
 
   async refreshBoard(){
