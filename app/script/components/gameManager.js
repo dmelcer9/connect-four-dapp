@@ -99,6 +99,7 @@ export default class GameManager extends React.Component{
       statusText: statusText,
       joinButtonDisabled : buttonDisabled,
       joinButtonText: buttonText,
+      joinAction: joinAction
     });
 
   }
@@ -146,7 +147,40 @@ export default class GameManager extends React.Component{
     }
   }
 
+  async clearGameIdInput(){
+    this.setState({
+      inputGameId: ""
+    });
+
+    setTimeout(()=>this.updateStatusText(),0);
+  }
+
   async handleJoinButton(){
+
+    try{
+      let id = String(this.state.inputGameId);
+      let acc = this.props.account;
+
+      console.log("Join button, " + this.state.joinAction);
+      switch(this.state.joinAction){
+        case "Join":
+          let bid = await this.props.c4inst.getBid.call(id, {from: acc});
+          await this.props.c4inst.joinGame(id, {from: acc, value: bid});
+          //NO BREAK
+        case "Load": //FALLS THROUGH
+          console.log("Load");
+          this.props.gameAdd(id);
+          this.clearGameIdInput();
+          break;
+        case "None": default:
+          //Do nothing
+          break;
+      }
+    } catch(error){
+      console.error(error);
+      this.setStatusText("Error when trying to join game");
+    }
+
 
   }
 
