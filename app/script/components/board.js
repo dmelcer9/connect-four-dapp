@@ -56,10 +56,12 @@ export default class Board extends React.Component{
   }
 
   render(){
-    var className = "w3-panel w3-card cboard";
+    var boardClassName = "w3-card w3-card cboard";
     if(this.state.loading){
-      className += " cboard-loading"
+      boardClassName += " cboard-loading"
     }
+
+    var status
 
     var board = [];
     for(var rowNum = BOARD_HEIGHT - 1; rowNum >= 0; rowNum--){
@@ -78,8 +80,27 @@ export default class Board extends React.Component{
       );
     }
     return (
-      <div className={className}>
-      {board}
+      <div className="w3-panel">
+        <div className={boardClassName}>
+          <header className="w3-container w3-blue">
+            <span className="w3-left">
+              <h2>Game {this.props.gameId.toString()}</h2>
+            </span>
+
+            <span className="w3-right">
+              <button className="w3-margin w3-btn w3-green">Refresh</button>
+              <button className="w3-margin w3-btn w3-red">Forfeit</button>
+            </span>
+          </header>
+
+          <div className="w3-panel w3-center">
+            {board}
+          </div>
+
+          <footer className="w3-container w3-blue">
+            <h6>You are spectating this game</h6>
+          </footer>
+        </div>
       </div>
     );
   }

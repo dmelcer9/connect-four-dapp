@@ -227,7 +227,7 @@ export default class GameManager extends React.Component{
       <div className="w3-panel">
         <div id="gameManager" className="w3-card">
           <header className="w3-container w3-blue">
-            <h3>Create or join a game</h3>
+            <h2>Create or join a game</h2>
           </header>
           <div className="w3-panel">
             <div>
