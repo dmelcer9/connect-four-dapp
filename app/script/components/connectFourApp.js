@@ -27,9 +27,6 @@ export default class ConnectFourApp extends React.Component{
 
 
       <div id="app">
-      <header className="w3-container w3-blue-grey">
-        <h1>Connect Four</h1>
-      </header>
       <div className="w3-container">
         <GameManager c4inst={this.props.c4inst}
                      account={this.props.account}

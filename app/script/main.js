@@ -1,7 +1,6 @@
 var Web3 = require("web3");
 
-require("../app.css")
-require("w3-css/w3.css")
+require("../style/app.css")
 
 import contract from 'truffle-contract'
 
@@ -50,30 +49,30 @@ import BigNumber from "bignumber.js"
 }*/
 
 window.addEventListener('load', async function() {
-  var web3used;
+  try{
+    if(typeof web3 === 'undefined') throw "No web3 detected";
+    console.log("Connected to mist/metamask");
 
-  // Checking if Web3 has been injected by the browser (Mist/MetaMask)
-  if (typeof web3 !== 'undefined') {
-    // Use Mist/MetaMask's provider
-    console.log("Using mist/metamask");
-    web3used = new Web3(web3.currentProvider);
-  } else {
-    //TODO Improve this error message
-    console.error("No web3 detected");
+    var web3used = new Web3(web3.currentProvider);
+
+    ConnectFour.setProvider(web3used.currentProvider);
+
+
+    var inst = await ConnectFour.deployed();
+
+    var account = (await web3used.eth.getAccounts())[0]
+
+    ReactDOM.render(
+      <ConnectFourApp gameId={new BigNumber("0")} c4inst={inst} account={account.toLowerCase()} web3={web3used}/>,
+      document.getElementById("root")
+    )
+
+  } catch(error){
+    document.getElementById("loading-card").setAttribute("hidden",true);
+    document.getElementById("error-card").removeAttribute("hidden");
+
+    console.error(error);
+    return;
   }
-
-  ConnectFour.setProvider(web3used.currentProvider);
-
-
-  var inst = await ConnectFour.deployed();
-
-  var account = (await web3used.eth.getAccounts())[0]
-//  console.log(account);
-
-
-  ReactDOM.render(
-    <ConnectFourApp gameId={new BigNumber("0")} c4inst={inst} account={account.toLowerCase()} web3={web3used}/>,
-    document.getElementById("root")
-  )
 
 });

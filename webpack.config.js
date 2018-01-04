@@ -21,9 +21,11 @@ module.exports = {
   plugins: [
     new CopyWebpackPlugin([
       { from: './app/index.html', to: "index.html" },
+      { from: './app/style', to: "style"},
       { from: './app/images', to: "images" },
-      { from: './app/fonts', to: "fonts" }
-    ]),
+      { from: './app/fonts', to: "fonts" },
+
+    ],{debug:true}),
     new ExtractTextPlugin("app.css")
   ],
   devServer: {

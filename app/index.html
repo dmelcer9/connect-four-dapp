@@ -1,16 +1,45 @@
 <html>
 <head>
   <title>Connect Four</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
+  <link rel="stylesheet" href="/style/w3.css">
 </head>
 <body>
 
 
+  <header class="w3-container w3-blue-grey">
+    <h1>Connect Four</h1>
+  </header>
 
   <div id="root">
-    <h1>Loading...</h1>
+    <div class="w3-container">
+      <div class="w3-panel">
+        <div class="w3-card" id="loading-card">
+          <header class="w3-container w3-blue">
+            <h2>Loading</h2>
+          </header>
+          <div class="w3-container">
+            <p>
+              Loading...
+            </p>
+          </div>
+        </div>
+        <div class="w3-card" id="error-card" hidden=true>
+          <header class="w3-container w3-red">
+            <h2>Error Loading</h2>
+          </header>
+          <div class="w3-container">
+            <p>
+              Error connecting to the Ethereum network.
+              Make sure that either Mist or MetaMask is installed and unlocked.
+              Additionally, make sure that you are using the Ropsten testnet.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
-
   <script src="app.js"></script>
 </body>
 </html>

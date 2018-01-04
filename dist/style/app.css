@@ -1,0 +1,18 @@
+.boardpiece{
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+}
+
+.boardpiece-red{
+  background-color:red;
+}
+
+.boardpiece-black{
+  background-color:black;
+}
+
+.boardpiece-none{
+  background-color:white;
+  border-radius: 0;
+}
