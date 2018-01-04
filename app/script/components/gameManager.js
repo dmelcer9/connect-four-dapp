@@ -54,6 +54,7 @@ export default class GameManager extends React.Component{
     const gameOver = await c4inst.getGameOver.call(gameId, fromac);
     const bid = String(await c4inst.getBid.call(gameId, fromac));
     const bidHuman = this.props.web3.utils.fromWei(bid, "ether").toString();
+    const whoseTurn = (await c4inst.getWhoseTurn.call(gameId, fromac)).toNumber();
 
 
     var statusText = "Game ID " + gameId + ": ";
@@ -69,7 +70,7 @@ export default class GameManager extends React.Component{
         statusColor = "amber";
       } else if(p1 === this.props.account){
         //Created by user
-        statusText += "You created this game.";
+        statusText += "You created this game and are waiting for someone to join.";
         if(isRestricted){
           statusText += "Player 2 is restricted to " + p2;
         }
@@ -98,9 +99,41 @@ export default class GameManager extends React.Component{
       }
       statusText += " Bid is " + bidHuman + " ether.";
     } else if(isStarted && !gameOver){
-
+      statusText += "Game is currently in progress. "
+      buttonDisabled = false;
+      joinAction = "Load";
+      statusColor = "blue";
+      buttonText = "Load Game";
+      if(this.props.account === p1){
+        statusText += "You are Player 1 (Red).";
+      } else if(this.props.account === p2){
+        statusText += "You are Player 2 (Black)."
+      } else{
+        statusText += "You are not a participant in this game.";
+        buttonText = "Spectate Game";
+      }
+    } else if(gameOver){
+      buttonDisabled = false;
+      joinAction = "Load";
+      statusColor = "blue";
+      buttonText = "View Game";
+      switch(whoseTurn){
+        case 1:
+          statusText += "Player 2 (Black) has won this game.";
+          break;
+        case 2:
+          statusText += "Player 1 (Red) has won this game.";
+          break;
+        default:
+          statusText += "This game has been canceled.";
+          break;
+      }
     } else{
-
+      buttonDisabled = false;
+      joinAction = "Load";
+      statusColor = "red";
+      buttonText = "View Game";
+      statusText += "This game appears to have some sort of error."
     }
 
     this.setState({
@@ -190,8 +223,6 @@ export default class GameManager extends React.Component{
       console.error(error);
       this.setStatusText("Error when trying to join game", "red");
     }
-
-
   }
 
   updateInputGameId(event){

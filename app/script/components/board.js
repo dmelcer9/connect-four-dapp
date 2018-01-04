@@ -18,6 +18,13 @@ export default class Board extends React.Component{
     this.refreshBoard();
   }
 
+  setLoadingAndRefreshBoard(){
+    this.setState({
+      loading:true
+    })
+    setTimeout(()=>this.refreshBoard(),0);
+  }
+
   async refreshBoard(){
     const gameId = this.props.gameId;
     const account = this.props.account;
@@ -25,11 +32,12 @@ export default class Board extends React.Component{
 
     var board = await c4inst.getBoard.call(gameId,{from:account});
     var boardNums = board.map(bignum=>bignum.toNumber());
-    this.setState(prevState=>{
-      prevState.board = boardNums;
-      prevState.loading = false;
-      return prevState;
+    this.setState({
+      board: boardNums,
+      loading: false
     })
+
+    console.log(boardNums);
   }
 
   handleClick(id){
@@ -41,7 +49,6 @@ export default class Board extends React.Component{
 
     console.log("Clicked " + String(id));
     this.setState(prevState=>{
-      prevState.loading = true;
 
       let prevColor = prevState.board[id];
       let newColor = (prevColor+1) % 3;
@@ -50,13 +57,11 @@ export default class Board extends React.Component{
       return prevState;
     })
 
-
-
-    this.refreshBoard();
+    this.setLoadingAndRefreshBoard();
   }
 
   render(){
-    var boardClassName = "w3-card w3-card cboard";
+    var boardClassName = "cboard";
     if(this.state.loading){
       boardClassName += " cboard-loading"
     }
@@ -81,20 +86,22 @@ export default class Board extends React.Component{
     }
     return (
       <div className="w3-panel w3-animate-bottom">
-        <div className={boardClassName}>
+        <div className="w3-card">
           <header className="w3-container w3-blue">
             <span className="w3-left">
               <h2>Game {this.props.gameId.toString()}</h2>
             </span>
 
             <span className="w3-right">
-              <button className="w3-margin w3-btn w3-green">Refresh</button>
+              <button className="w3-margin w3-btn w3-green" onClick={()=>this.setLoadingAndRefreshBoard()}>Refresh</button>
               <button className="w3-margin w3-btn w3-red">Forfeit</button>
             </span>
           </header>
 
           <div className="w3-panel w3-center">
-            {board}
+            <div className={boardClassName}>
+              {board}
+            </div>
           </div>
 
           <footer className="w3-container w3-blue">

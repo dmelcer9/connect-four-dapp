@@ -16,3 +16,8 @@
   background-color:white;
   border-radius: 0;
 }
+
+.cboard-loading, .cboard-loading button{
+  opacity: 0.5;
+  cursor: wait;
+}
