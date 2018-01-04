@@ -12,6 +12,7 @@ module.exports = {
   module: {
     loaders: [
       { test: /\.(js|jsx|es6)$/, exclude: /node_modules/, loader: "babel-loader"},
+      { test: /\.css$/i, loader: ["style-loader","css-loader"]},
       { test: /\.scss$/i, loader: ExtractTextPlugin.extract(["css", "sass"])},
       { test: /\.json$/i, loader: "json-loader"},
       { test: /\.sol/, loader: 'truffle-solidity-loader' }
@@ -20,8 +21,10 @@ module.exports = {
   plugins: [
     new CopyWebpackPlugin([
       { from: './app/index.html', to: "index.html" },
+      { from: './app/style', to: "style"},
       { from: './app/images', to: "images" },
-      { from: './app/fonts', to: "fonts" }
+      { from: './app/fonts', to: "fonts" },
+
     ]),
     new ExtractTextPlugin("app.css")
   ],

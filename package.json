@@ -7,9 +7,12 @@
     "test": "test"
   },
   "scripts": {
-    "build": "webpack",
-    "dw": "truffle deploy --network ganache && webpack",
-    "test": "truffle deploy --network ganache && truffle test --network ganache"
+    "clean": "rm -rf dist && rm -rf build",
+    "build": "npm run clean && truffle compile && webpack",
+    "dev": "truffle deploy --network ganache && webpack-dev-server",
+    "test": "truffle deploy --network ganache && truffle test --network ganache",
+    "windev": "truffle.cmd deploy --network ganache && webpack-dev-server",
+    "wintest": "truffle.cmd deploy --network ganache && truffle.cmd test --network ganache"
   },
   "repository": {
     "type": "git",
@@ -22,16 +25,24 @@
   },
   "homepage": "https://github.com/dmelcer9/connect-four-dapp#readme",
   "dependencies": {
-    "moment": "^2.20.0",
-    "truffle": "^4.0.3",
-    "zeppelin-solidity": "^1.4.0"
+    "moment": "^2.20.1",
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0",
+    "truffle": "^4.0.4",
+    "w3-css": "^4.0.4",
+    "web3": "^1.0.0-beta.27",
+    "zeppelin-solidity": "^1.5.0"
   },
   "devDependencies": {
     "babel-core": "^6.26.0",
     "babel-loader": "^7.1.2",
+    "babel-preset-react": "^6.24.1",
     "copy-webpack-plugin": "^4.3.1",
+    "css-loader": "^0.28.7",
     "extract-text-webpack-plugin": "^3.0.2",
     "ganache-cli": "^6.0.3",
+    "prop-types": "^15.6.0",
+    "style-loader": "^0.19.1",
     "truffle-contract": "^3.0.1",
     "truffle-solidity-loader": "0.0.8",
     "webpack": "^3.10.0",
