@@ -261,6 +261,7 @@ export default class GameManager extends React.Component{
             <h2>Create or join a game</h2>
           </header>
           <div className="w3-panel">
+            <p>Your Ethereum address is {this.props.account}.</p>
             <div>
               <label>Bid</label>
               <input className="w3-border w3-input" type="number" placeholder="Value in Ether"
