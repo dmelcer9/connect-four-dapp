@@ -19,6 +19,13 @@ export default class ConnectFourApp extends React.Component{
     })
   }
 
+  removeGame(gameId){
+    this.setState(prevState=>{
+      prevState.games.delete(gameId);
+      return prevState;
+    })
+  }
+
   render(){
     console.log(this.state.games);
 
@@ -35,7 +42,8 @@ export default class ConnectFourApp extends React.Component{
 
         {Array.from(this.state.games).map(gameId=>{
           return (
-            <Board gameId={gameId} key={gameId} c4inst={this.props.c4inst} account={this.props.account}/>
+            <Board gameId={gameId} key={gameId} c4inst={this.props.c4inst}
+             account={this.props.account} closeBoard={()=>this.removeGame(gameId)}/>
           )
         })}
       </div>

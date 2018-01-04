@@ -84,6 +84,7 @@ export default class Board extends React.Component{
         </div>
       );
     }
+
     return (
       <div className="w3-panel w3-animate-bottom">
         <div className="w3-card">
@@ -93,8 +94,9 @@ export default class Board extends React.Component{
             </span>
 
             <span className="w3-right">
-              <button className="w3-margin w3-btn w3-green" onClick={()=>this.setLoadingAndRefreshBoard()}>Refresh</button>
               <button className="w3-margin w3-btn w3-red">Forfeit</button>
+              <button className="w3-margin w3-btn w3-blue-grey" onClick={()=>this.setLoadingAndRefreshBoard()}>Refresh</button>
+              <button className="w3-margin w3-btn w3-blue-grey" onClick={()=>this.props.closeBoard()}>Close Game</button>
             </span>
           </header>
 
@@ -116,5 +118,6 @@ export default class Board extends React.Component{
 Board.propTypes = {
   gameId: PropTypes.any.isRequired,
   c4inst: PropTypes.any.isRequired,
-  account: PropTypes.string.isRequired
+  account: PropTypes.string.isRequired,
+  closeBoard: PropTypes.func.isRequired
 }
