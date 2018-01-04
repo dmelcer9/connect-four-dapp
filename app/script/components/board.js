@@ -56,7 +56,7 @@ export default class Board extends React.Component{
   }
 
   render(){
-    var className = "game-card cboard";
+    var className = "w3-panel w3-card cboard";
     if(this.state.loading){
       className += " cboard-loading"
     }

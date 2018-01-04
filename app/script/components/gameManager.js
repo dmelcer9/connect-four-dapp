@@ -18,10 +18,11 @@ export default class GameManager extends React.Component{
     super(props);
 
     this.state = {
-      inputBid: 0.01,
+      inputBid: "",
       inputRestrictedAddress: "",
       inputGameId: "",
       statusText: DEFAULT_STATUS,
+      statusColor: "blue",
       joinButtonText: "Join Game",
       joinButtonDisabled: true,
       joinAction: "None",
@@ -37,6 +38,7 @@ export default class GameManager extends React.Component{
         statusText: DEFAULT_STATUS,
         joinButtonDisabled : true,
         joinButtonText: "Join Game",
+        statusColor: "blue"
       });
       return;
     }
@@ -58,11 +60,13 @@ export default class GameManager extends React.Component{
     var buttonDisabled = true;
     var buttonText = "Join Game";
     var joinAction = "None";
+    var statusColor = "blue";
 
     if(!isStarted){
       if(p1 === NULL_ADDR){
         //Hasn't been created
         statusText += "Game Doesn't Exist.";
+        statusColor = "amber";
       } else if(p1 === this.props.account){
         //Created by user
         statusText += "You created this game.";
@@ -72,6 +76,7 @@ export default class GameManager extends React.Component{
         buttonText = "Load Game";
         buttonDisabled = false;
         joinAction = "Load";
+        statusColor = "blue"
       } else{
         //Created by someone else
         if(isRestricted){
@@ -79,13 +84,16 @@ export default class GameManager extends React.Component{
             statusText += "Restricted game is available to join.";
             buttonDisabled = false;
             joinAction = "Join";
+            statusColor = "green";
           } else{
             statusText += "Game is restricted to another player: " + p2;
+            statusColor = "amber";
           }
         } else{
           statusText += "Game is available to join.";
           buttonDisabled = false;
           joinAction = "Join";
+          statusColor = "green";
         }
       }
       statusText += " Bid is " + bidHuman + " ether.";
@@ -99,14 +107,16 @@ export default class GameManager extends React.Component{
       statusText: statusText,
       joinButtonDisabled : buttonDisabled,
       joinButtonText: buttonText,
-      joinAction: joinAction
+      joinAction: joinAction,
+      statusColor: statusColor
     });
 
   }
 
-  setStatusText(text){
+  setStatusText(text, color="blue"){
     this.setState({
-      statusText: text
+      statusText: text,
+      statusColor: color
     });
   }
 
@@ -121,11 +131,11 @@ export default class GameManager extends React.Component{
       console.log(value);
     } catch(error){
       console.error(error);
-      this.setStatusText("Please enter a valid bid.");
+      this.setStatusText("Please enter a valid bid.","red");
       return;
     }
 
-    this.setStatusText("Creating game...");
+    this.setStatusText("Creating game...", "blue");
 
     try{
       var transaction = await this.props.c4inst.createNewGame({
@@ -137,13 +147,13 @@ export default class GameManager extends React.Component{
 
       var createdId = transaction.logs[0].args.gameId;
 
-      this.setStatusText("Created a game with ID " + createdId.toString());
+      this.setStatusText("Created a game with ID " + createdId.toString(),"blue");
 
       this.props.gameAdd(createdId);
     } catch(error){
       console.error(error);
       this.setStatusText("There was some sort of error. "+
-          "Check the transaction history to see what happened");
+          "Check the transaction history to see what happened", "red");
     }
   }
 
@@ -178,7 +188,7 @@ export default class GameManager extends React.Component{
       }
     } catch(error){
       console.error(error);
-      this.setStatusText("Error when trying to join game");
+      this.setStatusText("Error when trying to join game", "red");
     }
 
 
@@ -202,25 +212,38 @@ export default class GameManager extends React.Component{
 
   render(){
     return (
-      <div id="gameManager" className="game-card">
-        <div className="options-box">
-          <div className="options">
-            Bid: <input type="number" value={this.state.inputBid} onChange={e=>this.updateInputBid(e)} />
+      <div className="w3-panel">
+        <div id="gameManager" className="w3-card">
+          <header className="w3-container w3-blue">
+            <h3>Create or join a game</h3>
+          </header>
+          <div className="w3-panel">
+            <div>
+              <label>Bid</label>
+              <input className="w3-border w3-input" type="number" value={this.state.inputBid} onChange={e=>this.updateInputBid(e)} />
+            </div>
+            <p />
+            <div>
+              <label>Address to restrict to</label>
+              <input className="w3-border w3-input" type="text" />
+            </div>
+            <p />
+            <button className="w3-btn w3-blue" onClick={()=>this.createGame()}>Create Game</button>
           </div>
-          <button onClick={()=>this.createGame()}>Create Game</button>
-        </div>
-        <div className="options-box">
-          <div className="options">
-            Game ID: <input type="number" value={this.state.inputGameId} onChange={e=>this.updateInputGameId(e)} />
+          <div className="w3-panel">
+            <div className="options">
+              Game ID: <input className="w3-input" type="number" value={this.state.inputGameId} onChange={e=>this.updateInputGameId(e)} />
+            </div>
+            <p />
+            <button className="w3-btn w3-blue" onClick={()=>this.handleJoinButton()} disabled={this.state.joinButtonDisabled}>
+              {this.state.joinButtonText}
+            </button>
           </div>
+          <footer className={"w3-container w3-" + this.state.statusColor}>
+            <h6 id="statusText">{this.state.statusText}</h6>
+          </footer>
 
-          <button onClick={()=>this.handleJoinButton()} disabled={this.state.joinButtonDisabled}>
-            {this.state.joinButtonText}
-          </button>
         </div>
-
-        <div id="statusText">{this.state.statusText}</div>
-
       </div>);
   }
 }

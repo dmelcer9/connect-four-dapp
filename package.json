@@ -28,6 +28,7 @@
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
     "truffle": "^4.0.4",
+    "w3-css": "^4.0.4",
     "web3": "^1.0.0-beta.27",
     "zeppelin-solidity": "^1.5.0"
   },

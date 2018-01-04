@@ -1,6 +1,7 @@
 var Web3 = require("web3");
 
 require("../app.css")
+require("w3-css/w3.css")
 
 import contract from 'truffle-contract'
 
