@@ -23,7 +23,14 @@ export default class ConnectFourApp extends React.Component{
     console.log(this.state.games);
 
     var r = (
+
+
+
       <div id="app">
+      <header className="w3-container w3-blue-grey">
+        <h1>Connect Four</h1>
+      </header>
+      <div className="w3-container">
         <GameManager c4inst={this.props.c4inst}
                      account={this.props.account}
                      gameAdd={num=>this.addGame(num)}
@@ -34,6 +41,7 @@ export default class ConnectFourApp extends React.Component{
             <Board gameId={gameId} key={gameId} c4inst={this.props.c4inst} account={this.props.account}/>
           )
         })}
+      </div>
       </div>
     )
     return r;

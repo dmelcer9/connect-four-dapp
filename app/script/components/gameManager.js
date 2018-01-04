@@ -209,8 +209,20 @@ export default class GameManager extends React.Component{
       inputBid: event.target.value
     });
   }
+  updateRestrictedAddressInput(event){
+    this.setState({
+      inputRestrictedAddress: event.target.value
+    });
+  }
 
   render(){
+    var createButtonText;
+    if(this.state.inputRestrictedAddress === ""){
+      createButtonText = "Create Game";
+    } else{
+      createButtonText = "Create Restricted Game";
+    }
+
     return (
       <div className="w3-panel">
         <div id="gameManager" className="w3-card">
@@ -220,19 +232,22 @@ export default class GameManager extends React.Component{
           <div className="w3-panel">
             <div>
               <label>Bid</label>
-              <input className="w3-border w3-input" type="number" value={this.state.inputBid} onChange={e=>this.updateInputBid(e)} />
+              <input className="w3-border w3-input" type="number" placeholder="Value in Ether"
+              value={this.state.inputBid} onChange={e=>this.updateInputBid(e)} />
             </div>
             <p />
             <div>
               <label>Address to restrict to</label>
-              <input className="w3-border w3-input" type="text" />
+              <input className="w3-border w3-input" type="text" placeholder="Leave blank if anyone can join"
+              value={this.state.inputRestrictedAddress} onChange={e=>this.updateRestrictedAddressInput(e)}/>
             </div>
             <p />
-            <button className="w3-btn w3-blue" onClick={()=>this.createGame()}>Create Game</button>
+            <button className="w3-btn w3-blue" onClick={()=>this.createGame()}>{createButtonText}</button>
           </div>
           <div className="w3-panel">
             <div className="options">
-              Game ID: <input className="w3-input" type="number" value={this.state.inputGameId} onChange={e=>this.updateInputGameId(e)} />
+              Game ID: <input className="w3-border w3-input" type="number" placeholder="Enter the ID of a game"
+              value={this.state.inputGameId} onChange={e=>this.updateInputGameId(e)} />
             </div>
             <p />
             <button className="w3-btn w3-blue" onClick={()=>this.handleJoinButton()} disabled={this.state.joinButtonDisabled}>
