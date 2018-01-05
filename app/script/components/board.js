@@ -7,22 +7,51 @@ const BOARD_WIDTH = 7;
 const BOARD_HEIGHT = 6;
 const BOARD_AREA = BOARD_WIDTH * BOARD_HEIGHT;
 
+const gamePropMap = {
+  "bid":0,
+  "lastTimePlayed":1,
+  "playerOneRed":2,
+  "playerTwoBlack":3,
+  "whoseTurn":4,
+  "restricted":5,
+  "isStarted":6,
+  "gameOver":7
+  //Board is a separate function call because solidity is stupid
+};
+
 export default class Board extends React.Component{
   constructor(props){
     super(props);
     var arr = new Array(BOARD_AREA);
     arr.fill(0);
 
-    this.state = {board:arr, loading:true};
+    this.state = {
+      game:[
+        0,
+        0,
+        "Loading",
+        "Loading",
+        0,
+        false,
+        false,
+        false,
+        false
+      ],
+      board:arr,
+      loading:true};
 
     this.refreshBoard();
   }
 
   setLoadingAndRefreshBoard(){
+    this.setLoading();
+    setTimeout(()=>this.refreshBoard(),0);
+  }
+
+  setLoading(){
     this.setState({
       loading:true
-    })
-    setTimeout(()=>this.refreshBoard(),0);
+    });
   }
 
   async refreshBoard(){
@@ -30,14 +59,21 @@ export default class Board extends React.Component{
     const account = this.props.account;
     const c4inst = this.props.c4inst;
 
+    const game = await c4inst.games.call(gameId, {from:account});
+
     var board = await c4inst.getBoard.call(gameId,{from:account});
     var boardNums = board.map(bignum=>bignum.toNumber());
     this.setState({
-      board: boardNums,
-      loading: false
+      game: game,
+      loading: false,
+      board: boardNums
     })
 
-    console.log(boardNums);
+    //console.log(boardNums);
+  }
+
+  getGameState(whichOne){
+    return this.state.game[gamePropMap[whichOne]];
   }
 
   handleClick(id){
@@ -48,16 +84,49 @@ export default class Board extends React.Component{
     }
 
     console.log("Clicked " + String(id));
-    this.setState(prevState=>{
 
-      let prevColor = prevState.board[id];
-      let newColor = (prevColor+1) % 3;
-      prevState.board[id] = newColor;
-
-      return prevState;
-    })
 
     this.setLoadingAndRefreshBoard();
+  }
+
+
+  getWhoIsPlayer(){
+    if(this.props.account === this.getGameState("playerOneRed")){
+      return 1;
+    } else if(this.props.account === this.getGameState("playerTwoBlack")){
+      return 2;
+    } else{
+      return NaN;
+    }
+  }
+
+  isPlayerOfGame(){
+    return !isNaN(this.getWhoIsPlayer());
+  }
+
+  gameInProgress(){
+    return this.getGameState("isStarted") && !this.getGameState("gameOver");
+  }
+
+  async forfeitButton(){
+
+    if(this.isPlayerOfGame() && this.gameInProgress()){
+      this.setLoading();
+      try{
+        await this.props.c4inst.forfeit(this.props.gameId, {from:this.props.account});
+      } catch(error){
+        alert("Game was not forfeited.");
+        console.error(error);
+      }
+
+      this.setLoadingAndRefreshBoard();
+    }
+
+  }
+
+
+  getForfeitDisabled(){
+    return !this.isPlayerOfGame() || this.getGameState("gameOver");
   }
 
   render(){
@@ -94,7 +163,9 @@ export default class Board extends React.Component{
             </span>
 
             <span className="w3-right">
-              <button className="w3-margin w3-btn w3-red">Forfeit</button>
+              <button className="w3-margin w3-btn w3-red" disabled={this.getForfeitDisabled()} onClick={()=>this.forfeitButton()}>
+                Forfeit
+              </button>
               <button className="w3-margin w3-btn w3-blue-grey" onClick={()=>this.setLoadingAndRefreshBoard()}>Refresh</button>
               <button className="w3-margin w3-btn w3-blue-grey" onClick={()=>this.props.closeBoard()}>Close Game</button>
             </span>
