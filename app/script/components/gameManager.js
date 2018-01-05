@@ -117,17 +117,7 @@ export default class GameManager extends React.Component{
       joinAction = "Load";
       statusColor = "blue";
       buttonText = "View Game";
-      switch(whoseTurn){
-        case 1:
-          statusText += "Player 2 (Black) has won this game.";
-          break;
-        case 2:
-          statusText += "Player 1 (Red) has won this game.";
-          break;
-        default:
-          statusText += "This game has been canceled.";
-          break;
-      }
+      statusText += "The game has ended."
     } else{
       buttonDisabled = false;
       joinAction = "Load";
