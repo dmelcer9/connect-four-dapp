@@ -38,6 +38,7 @@ export default class WinningsWidget extends React.Component{
     try{
       //For some reason MetaMask has a default gas limit that's too low for this
       await this.props.c4inst.withdrawPayments({from:this.props.account, gas:50000});
+      console.log("Withdrawn successfully. This widget should reload and hide itself in a few seconds.")
     } catch(error){
       alert("There was an error when withdrawing payments, check console for details.");
       console.error(error);

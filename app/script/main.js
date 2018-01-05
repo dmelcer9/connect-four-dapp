@@ -65,18 +65,27 @@ window.addEventListener('load', async function() {
 
     var inst = await ConnectFour.deployed();
 
-
     const updateGasPrice = function(newPriceInGwei){
-      console.log(newPriceInGwei);
+      console.log("Gas price: " + newPriceInGwei + " gwei");
       ConnectFour.defaults({
           gasPrice: web3used.utils.toWei(newPriceInGwei,"gwei")
       });
+
+      localStorage.setItem("defaultGas",newPriceInGwei);
     }
+
+    var defaultGas = localStorage.getItem("defaultGas");
+
+    if(defaultGas == null){
+      defaultGas = "1";
+    }
+
+    updateGasPrice(defaultGas);
 
 
     ReactDOM.render(
       <ConnectFourApp gameId={new BigNumber("0")} c4inst={inst} account={account.toLowerCase()}
-      updateGasPrice={updateGasPrice} web3={web3used}/>,
+      updateGasPrice={updateGasPrice} web3={web3used} defaultGas={defaultGas}/>,
       document.getElementById("root")
     )
 

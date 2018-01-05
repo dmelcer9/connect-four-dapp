@@ -26,10 +26,8 @@ export default class GameManager extends React.Component{
       joinButtonText: "Join Game",
       joinButtonDisabled: true,
       joinAction: "None",
-      gasPrice: "1"
+      gasPrice: this.props.defaultGas
     }
-
-    this.props.updateGasPrice("1");
   }
 
   async updateStatusText(){
@@ -151,9 +149,7 @@ export default class GameManager extends React.Component{
 
     try{
       var inputBidNum = String(this.state.inputBid);
-      console.log(inputBidNum);
       value = this.props.web3.utils.toWei(inputBidNum,"ether");
-      console.log(value);
     } catch(error){
       console.error(error);
       this.setStatusText("Please enter a valid bid.","red");
@@ -184,8 +180,6 @@ export default class GameManager extends React.Component{
         });
       }
 
-      console.log(transaction);
-
       var createdId = transaction.logs[0].args.gameId;
 
       this.setStatusText("Created a game with ID " + createdId.toString(),"blue");
@@ -212,14 +206,13 @@ export default class GameManager extends React.Component{
       let id = String(this.state.inputGameId);
       let acc = this.props.account;
 
-      console.log("Join button, " + this.state.joinAction);
+      console.log("Join button pressed. Action to take: " + this.state.joinAction);
       switch(this.state.joinAction){
         case "Join":
           let bid = await this.props.c4inst.getBid.call(id, {from: acc});
           await this.props.c4inst.joinGame(id, {from: acc, value: bid});
           //NO BREAK
         case "Load": //FALLS THROUGH
-          console.log("Load");
           this.props.gameAdd(id);
           this.clearGameIdInput();
           break;
@@ -325,6 +318,7 @@ GameManager.propTypes = {
   account: PropTypes.string.isRequired,
   web3: PropTypes.any.isRequired,
   updateGasPrice: PropTypes.func.isRequired,
+  defaultGas: PropTypes.string.isRequired,
 
   //Accepts a BigNumber with a game to add
   gameAdd: PropTypes.func.isRequired
