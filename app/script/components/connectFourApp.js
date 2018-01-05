@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import Board from './board'
 import BigNumber from 'bignumber.js'
 import GameManager from './gameManager'
+import WinningsWidget from './winningsWidget'
 
 export default class ConnectFourApp extends React.Component{
   constructor(props){
@@ -35,6 +36,9 @@ export default class ConnectFourApp extends React.Component{
 
       <div id="app">
       <div className="w3-container">
+        <WinningsWidget c4inst={this.props.c4inst}
+                        account={this.props.account}
+                        web3={this.props.web3}/>
         <GameManager c4inst={this.props.c4inst}
                      account={this.props.account}
                      gameAdd={num=>this.addGame(num)}
