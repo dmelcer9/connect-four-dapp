@@ -63,7 +63,7 @@ export default class WinningsWidget extends React.Component{
           </header>
 
           <div className="w3-panel">
-            You have a pending payout of <strong>{this.state.payout} Ether</strong>.
+            <p>You have a pending payout of <strong>{this.state.payout} Ether</strong>.</p>
 
             <button disabled={this.state.disableButton} className="w3-btn w3-blue" onClick={()=>this.withdraw()}>Withdraw</button>
           </div>

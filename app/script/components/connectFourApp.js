@@ -42,7 +42,8 @@ export default class ConnectFourApp extends React.Component{
         <GameManager c4inst={this.props.c4inst}
                      account={this.props.account}
                      gameAdd={num=>this.addGame(num)}
-                     web3={this.props.web3}/>
+                     web3={this.props.web3}
+                     updateGasPrice={this.props.updateGasPrice}/>
 
         {Array.from(this.state.games).map(gameId=>{
           return (
@@ -60,5 +61,6 @@ export default class ConnectFourApp extends React.Component{
 ConnectFourApp.propTypes = {
   c4inst: PropTypes.any.isRequired,
   account: PropTypes.string.isRequired,
-  web3: PropTypes.any.isRequired
+  web3: PropTypes.any.isRequired,
+  updateGasPrice: PropTypes.func.isRequired
 }

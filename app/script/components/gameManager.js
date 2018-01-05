@@ -26,8 +26,10 @@ export default class GameManager extends React.Component{
       joinButtonText: "Join Game",
       joinButtonDisabled: true,
       joinAction: "None",
+      gasPrice: "1"
     }
 
+    this.props.updateGasPrice("1");
   }
 
   async updateStatusText(){
@@ -251,6 +253,17 @@ export default class GameManager extends React.Component{
       inputRestrictedAddress: event.target.value
     });
   }
+  updateGasPrice(event){
+
+    this.setState({
+      gasPrice: event.target.value
+    });
+
+    if(event.target.value !== ""){
+      this.props.updateGasPrice(event.target.value);
+    }
+
+  }
 
   render(){
     var createButtonText;
@@ -268,6 +281,12 @@ export default class GameManager extends React.Component{
           </header>
           <div className="w3-panel">
             <p>Your Ethereum address is {this.props.account}.</p>
+            <div>
+              <label>Gas Price (gwei)</label>
+              <input className="w3-border w3-input" type="number" placeholder="Gas price to use as default"
+              value={this.state.gasPrice} onChange={e=>this.updateGasPrice(e)} />
+            </div>
+              <hr className="w3-border-dark-grey" />
             <div>
               <label>Bid</label>
               <input className="w3-border w3-input" type="number" placeholder="Value in Ether"
@@ -305,6 +324,7 @@ GameManager.propTypes = {
   c4inst: PropTypes.any.isRequired,
   account: PropTypes.string.isRequired,
   web3: PropTypes.any.isRequired,
+  updateGasPrice: PropTypes.func.isRequired,
 
   //Accepts a BigNumber with a game to add
   gameAdd: PropTypes.func.isRequired

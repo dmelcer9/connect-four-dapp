@@ -57,13 +57,26 @@ window.addEventListener('load', async function() {
 
     ConnectFour.setProvider(web3used.currentProvider);
 
+    var account = (await web3used.eth.getAccounts())[0];
+
+    ConnectFour.defaults({
+      from: account,
+    })
 
     var inst = await ConnectFour.deployed();
 
-    var account = (await web3used.eth.getAccounts())[0]
+
+    const updateGasPrice = function(newPriceInGwei){
+      console.log(newPriceInGwei);
+      ConnectFour.defaults({
+          gasPrice: web3used.utils.toWei(newPriceInGwei,"gwei")
+      });
+    }
+
 
     ReactDOM.render(
-      <ConnectFourApp gameId={new BigNumber("0")} c4inst={inst} account={account.toLowerCase()} web3={web3used}/>,
+      <ConnectFourApp gameId={new BigNumber("0")} c4inst={inst} account={account.toLowerCase()}
+      updateGasPrice={updateGasPrice} web3={web3used}/>,
       document.getElementById("root")
     )
 
