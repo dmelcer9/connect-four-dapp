@@ -37,7 +37,7 @@ export default class WinningsWidget extends React.Component{
 
     try{
       //For some reason MetaMask has a default gas limit that's too low for this
-      await this.props.c4inst.withdrawPayments({from:this.props.account, gasLimit:50000});
+      await this.props.c4inst.withdrawPayments({from:this.props.account, gas:50000});
     } catch(error){
       alert("There was an error when withdrawing payments, check console for details.");
       console.error(error);
@@ -64,11 +64,6 @@ export default class WinningsWidget extends React.Component{
 
           <div className="w3-panel">
             You have a pending payout of <strong>{this.state.payout} Ether</strong>.
-
-            <div className="w3-panel w3-border-red w3-border-left w3-pale-red">
-              Warning: Some clients underestimate the amount of gas used for this operation.
-              Make sure that the gas limit is at least 50000 or the transaction may not go through.
-            </div>
 
             <button disabled={this.state.disableButton} className="w3-btn w3-blue" onClick={()=>this.withdraw()}>Withdraw</button>
           </div>
