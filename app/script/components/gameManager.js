@@ -72,7 +72,7 @@ export default class GameManager extends React.Component{
         //Created by user
         statusText += "You created this game and are waiting for someone to join.";
         if(isRestricted){
-          statusText += "Player 2 is restricted to " + p2;
+          statusText += " Player 2 is restricted to " + p2 + ".";
         }
         buttonText = "Load Game";
         buttonDisabled = false;
@@ -87,7 +87,7 @@ export default class GameManager extends React.Component{
             joinAction = "Join";
             statusColor = "green";
           } else{
-            statusText += "Game is restricted to another player: " + p2;
+            statusText += "Game is restricted to another player: " + p2 + ".";
             statusColor = "amber";
           }
         } else{
@@ -161,10 +161,26 @@ export default class GameManager extends React.Component{
     this.setStatusText("Creating game...", "blue");
 
     try{
-      var transaction = await this.props.c4inst.createNewGame({
-        from: this.props.account,
-        value: value
-      });
+
+      var transaction;
+
+      if(this.state.inputRestrictedAddress === ""){
+        transaction = await this.props.c4inst.createNewGame({
+          from: this.props.account,
+          value: value
+        });
+      } else{
+        if(!this.props.web3.utils.isAddress(this.state.inputRestrictedAddress)){
+          this.setStatusText("Please enter a valid address.", "red");
+          return;
+        }
+        transaction = await this.props.c4inst.createNewRestrictedGame(
+          this.state.inputRestrictedAddress,
+          {
+          from: this.props.account,
+          value: value
+        });
+      }
 
       console.log(transaction);
 
