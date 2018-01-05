@@ -115,18 +115,33 @@ export default class Board extends React.Component{
       try{
         await this.props.c4inst.forfeit(this.props.gameId, {from:this.props.account});
       } catch(error){
-        alert("Game was not forfeited.");
+        alert("There was an error with forfeiting the game. Check console for details.");
         console.error(error);
       }
-
-      this.setLoadingAndRefreshBoard();
+    } else if(this.isPlayerOfGame() && !this.getGameState("isStarted")){
+      this.setLoading();
+      try{
+        await this.props.c4inst.cancelCreatedGame(this.props.gameId, {from:this.props.account});
+      } catch(error){
+        alert("There was an error when cancelling the game. Check console for details.");
+        console.error(error);
+      }
     }
+
+    this.setLoadingAndRefreshBoard();
 
   }
 
-
   getForfeitDisabled(){
     return !this.isPlayerOfGame() || this.getGameState("gameOver");
+  }
+
+  getForfeitButtonText(){
+    if(this.getGameState("isStarted")){
+      return "Forfeit Game";
+    } else{
+      return "Cancel Game (refund)";
+    }
   }
 
   render(){
@@ -164,7 +179,7 @@ export default class Board extends React.Component{
 
             <span className="w3-right">
               <button className="w3-margin w3-btn w3-red" disabled={this.getForfeitDisabled()} onClick={()=>this.forfeitButton()}>
-                Forfeit
+                {this.getForfeitButtonText()}
               </button>
               <button className="w3-margin w3-btn w3-blue-grey" onClick={()=>this.setLoadingAndRefreshBoard()}>Refresh</button>
               <button className="w3-margin w3-btn w3-blue-grey" onClick={()=>this.props.closeBoard()}>Close Game</button>
