@@ -42,7 +42,7 @@ export default class Board extends React.Component{
 
     this.refreshBoard();
 
-    this.autoBoardRefresh();
+    setTimeout(()=>this.autoBoardRefresh(), 1000);
   }
 
   async autoBoardRefresh(){
@@ -108,9 +108,9 @@ export default class Board extends React.Component{
 
   //Will this move cause a win
   detectWinOnPotentialBoard(potentialBoard, startingLoc, color){
-    const hasThreeSpacesToRight = piece=> piece / BOARD_WIDTH < BOARD_HEIGHT - 3;
-    const hasThreeSpacesUp = piece=> piece % BOARD_WIDTH < BOARD_WIDTH - 3;
-    const hasThreeSpacesToLeft = piece=> piece / BOARD_WIDTH >= 3;
+    const hasThreeSpacesUp = piece=> piece / BOARD_WIDTH < BOARD_HEIGHT - 3;
+    const hasThreeSpacesToRight = piece=> piece % BOARD_WIDTH < BOARD_WIDTH - 3;
+    const hasThreeSpacesToLeft = piece=> piece % BOARD_WIDTH >= 3;
     const both = (condition1, condition2) => (piece) => condition1(piece) && condition2(piece);
 
     const winDirections = [
@@ -256,6 +256,41 @@ export default class Board extends React.Component{
     return !this.state.loading && this.isCurrentlyPlaying() && spaceIsFree && (inBottomRow || hasPieceBelow);
   }
 
+  getStatusText(){
+    if(!this.getGameState("isStarted")){
+      return "Game has not started yet.";
+    } else if(this.gameInProgress()){
+      if(this.isPlayerOfGame()){
+        var text = "";
+
+        switch(this.getWhoIsPlayer()){
+          case 1:
+            text += "You are Player 1 (Red). ";
+            break;
+          case 2:
+            text += "You are Player 2 (Black). ";
+            break;
+          default:
+            return "There was an error getting the game status.";
+            break;
+        }
+
+        if(this.isCurrentlyPlaying()){
+          text += "It is your turn!"
+        }
+
+        return text;
+
+      } else{
+        return "You are spectating this game.";
+      }
+    } else if(this.getGameState("gameOver")){
+      return "The game has ended.";
+    } else{
+      return "There was an error getting the game status.";
+    }
+  }
+
   render(){
     var boardClassName = "cboard";
     if(this.state.loading){
@@ -305,7 +340,7 @@ export default class Board extends React.Component{
           </div>
 
           <footer className="w3-container w3-blue">
-            <h6>You are spectating this game</h6>
+            <h6>{this.getStatusText()}</h6>
           </footer>
         </div>
       </div>
