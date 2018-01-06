@@ -16,6 +16,12 @@ contract ConnectFour is PullPayment {
     address playerOneRed;
     address playerTwoBlack;
 
+    BoardPiece whoseTurn;
+
+    bool restricted;
+    bool isStarted;
+    bool gameOver;
+
     //Board is 7 columns by 6 rows
     //0 is the bottom-left corner of the board
     //1 is the second from the left on the bottom
@@ -23,12 +29,6 @@ contract ConnectFour is PullPayment {
     //7 is the left on the second-to-bottom row
     //41 is the top-right
     BoardPiece[42] board;
-
-    BoardPiece whoseTurn;
-
-    bool restricted;
-    bool isStarted;
-    bool gameOver;
   }
 
   event logGameCreated(uint gameId, bool restricted);

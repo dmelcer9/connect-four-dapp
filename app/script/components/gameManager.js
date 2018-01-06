@@ -26,8 +26,8 @@ export default class GameManager extends React.Component{
       joinButtonText: "Join Game",
       joinButtonDisabled: true,
       joinAction: "None",
+      gasPrice: this.props.defaultGas
     }
-
   }
 
   async updateStatusText(){
@@ -72,7 +72,7 @@ export default class GameManager extends React.Component{
         //Created by user
         statusText += "You created this game and are waiting for someone to join.";
         if(isRestricted){
-          statusText += "Player 2 is restricted to " + p2;
+          statusText += " Player 2 is restricted to " + p2 + ".";
         }
         buttonText = "Load Game";
         buttonDisabled = false;
@@ -87,7 +87,7 @@ export default class GameManager extends React.Component{
             joinAction = "Join";
             statusColor = "green";
           } else{
-            statusText += "Game is restricted to another player: " + p2;
+            statusText += "Game is restricted to another player: " + p2 + ".";
             statusColor = "amber";
           }
         } else{
@@ -117,17 +117,7 @@ export default class GameManager extends React.Component{
       joinAction = "Load";
       statusColor = "blue";
       buttonText = "View Game";
-      switch(whoseTurn){
-        case 1:
-          statusText += "Player 2 (Black) has won this game.";
-          break;
-        case 2:
-          statusText += "Player 1 (Red) has won this game.";
-          break;
-        default:
-          statusText += "This game has been canceled.";
-          break;
-      }
+      statusText += "The game has ended."
     } else{
       buttonDisabled = false;
       joinAction = "Load";
@@ -159,9 +149,7 @@ export default class GameManager extends React.Component{
 
     try{
       var inputBidNum = String(this.state.inputBid);
-      console.log(inputBidNum);
       value = this.props.web3.utils.toWei(inputBidNum,"ether");
-      console.log(value);
     } catch(error){
       console.error(error);
       this.setStatusText("Please enter a valid bid.","red");
@@ -171,12 +159,26 @@ export default class GameManager extends React.Component{
     this.setStatusText("Creating game...", "blue");
 
     try{
-      var transaction = await this.props.c4inst.createNewGame({
-        from: this.props.account,
-        value: value
-      });
 
-      console.log(transaction);
+      var transaction;
+
+      if(this.state.inputRestrictedAddress === ""){
+        transaction = await this.props.c4inst.createNewGame({
+          from: this.props.account,
+          value: value
+        });
+      } else{
+        if(!this.props.web3.utils.isAddress(this.state.inputRestrictedAddress)){
+          this.setStatusText("Please enter a valid address.", "red");
+          return;
+        }
+        transaction = await this.props.c4inst.createNewRestrictedGame(
+          this.state.inputRestrictedAddress,
+          {
+          from: this.props.account,
+          value: value
+        });
+      }
 
       var createdId = transaction.logs[0].args.gameId;
 
@@ -204,14 +206,13 @@ export default class GameManager extends React.Component{
       let id = String(this.state.inputGameId);
       let acc = this.props.account;
 
-      console.log("Join button, " + this.state.joinAction);
+      console.log("Join button pressed. Action to take: " + this.state.joinAction);
       switch(this.state.joinAction){
         case "Join":
           let bid = await this.props.c4inst.getBid.call(id, {from: acc});
           await this.props.c4inst.joinGame(id, {from: acc, value: bid});
           //NO BREAK
         case "Load": //FALLS THROUGH
-          console.log("Load");
           this.props.gameAdd(id);
           this.clearGameIdInput();
           break;
@@ -245,6 +246,17 @@ export default class GameManager extends React.Component{
       inputRestrictedAddress: event.target.value
     });
   }
+  updateGasPrice(event){
+
+    this.setState({
+      gasPrice: event.target.value
+    });
+
+    if(event.target.value !== ""){
+      this.props.updateGasPrice(event.target.value);
+    }
+
+  }
 
   render(){
     var createButtonText;
@@ -261,6 +273,13 @@ export default class GameManager extends React.Component{
             <h2>Create or join a game</h2>
           </header>
           <div className="w3-panel">
+            <p>Your Ethereum address is {this.props.account}.</p>
+            <div>
+              <label>Gas Price (gwei)</label>
+              <input className="w3-border w3-input" type="number" placeholder="Gas price to use as default"
+              value={this.state.gasPrice} onChange={e=>this.updateGasPrice(e)} />
+            </div>
+              <hr className="w3-border-dark-grey" />
             <div>
               <label>Bid</label>
               <input className="w3-border w3-input" type="number" placeholder="Value in Ether"
@@ -298,6 +317,8 @@ GameManager.propTypes = {
   c4inst: PropTypes.any.isRequired,
   account: PropTypes.string.isRequired,
   web3: PropTypes.any.isRequired,
+  updateGasPrice: PropTypes.func.isRequired,
+  defaultGas: PropTypes.string.isRequired,
 
   //Accepts a BigNumber with a game to add
   gameAdd: PropTypes.func.isRequired
