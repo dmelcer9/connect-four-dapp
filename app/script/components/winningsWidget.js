@@ -11,7 +11,7 @@ export default class WinningsWidget extends React.Component{
       disableButton: false
     }
 
-    this.repeatRefreshWidget(5000);
+    this.repeatRefreshWidget(1000);
   }
 
   async repeatRefreshWidget(time){
