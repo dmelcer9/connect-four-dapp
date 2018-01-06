@@ -41,6 +41,18 @@ export default class Board extends React.Component{
       loading:true};
 
     this.refreshBoard();
+
+    this.autoBoardRefresh();
+  }
+
+  async autoBoardRefresh(){
+    //Don't stack refreshes
+    if(!this.state.loading){
+      //Don't spam calls, wait for previous to complete first.
+      await this.refreshBoard();
+    }
+
+    setTimeout(()=>this.autoBoardRefresh(), 1000);
   }
 
   setLoadingAndRefreshBoard(){
@@ -72,19 +84,54 @@ export default class Board extends React.Component{
     //console.log(boardNums);
   }
 
+  //Will this move cause a win
+  detectWin(moveToMake, color){
+    const hasThreeSpacesToRight = piece=> piece / BOARD_WIDTH < BOARD_HEIGHT - 3;
+    const hasThreeSpacesUp = piece=> piece % BOARD_WIDTH < BOARD_WIDTH - 3;
+    const hasThreeSpacesToLeft = piece=> piece / BOARD_WIDTH >= 3;
+    const both = (condition1, condition2) => (piece) => condition1(piece) && condition2(piece);
+
+    const winDirections = [
+      {
+        type:"North",
+        boundary: hasThreeSpacesToRight;
+      },
+      {
+        type:"Northeast",
+        boundary: both(hasThreeSpacesUp, hasThreeSpacesToRight);
+      },
+      {
+        type:"East",
+        boundary: hasThreeSpacesToRight
+      },
+      {
+        type:"Northwest",
+        boundary: both(hasThreeSpacesUp, hasThreeSpacesToLeft)
+      }
+    ];
+  }
+
   getGameState(whichOne){
     return this.state.game[gamePropMap[whichOne]];
   }
 
-  handleClick(id){
+  async handleClick(pos){
 
-    //If loading, ignore clicks
-    if(this.state.loading){
+    //If loading or not allowed, ignore clicks
+    if(!this.isMoveAllowed(pos)){
       return;
     }
 
-    console.log("Clicked " + String(id));
+    console.log("Clicked " + String(pos));
 
+    this.setLoading();
+
+    try{
+      await this.props.c4inst.makeMove(this.props.gameId, String(pos),{from:this.props.account});
+    } catch(error){
+      alert("Could not make move, see console for details.");
+      console.error(error);
+    }
 
     this.setLoadingAndRefreshBoard();
   }
@@ -106,6 +153,11 @@ export default class Board extends React.Component{
 
   gameInProgress(){
     return this.getGameState("isStarted") && !this.getGameState("gameOver");
+  }
+
+  isCurrentlyPlaying(){
+    return this.gameInProgress() && this.isPlayerOfGame()
+      && (this.getWhoIsPlayer() == this.getGameState("whoseTurn"));
   }
 
   async forfeitButton(){
@@ -144,6 +196,15 @@ export default class Board extends React.Component{
     }
   }
 
+  isMoveAllowed(moveId){
+
+    const spaceIsFree = this.state.board[moveId] == 0;
+    const inBottomRow = moveId < BOARD_WIDTH;
+    const hasPieceBelow = (!inBottomRow) && (this.state.board[moveId - BOARD_WIDTH] != 0);
+
+    return !this.state.loading && this.isCurrentlyPlaying() && spaceIsFree && (inBottomRow || hasPieceBelow);
+  }
+
   render(){
     var boardClassName = "cboard";
     if(this.state.loading){
@@ -159,7 +220,7 @@ export default class Board extends React.Component{
         let cellId = (rowNum * BOARD_WIDTH) + col;
         var cellColor = this.state.board[cellId];
         row.push(
-          <BoardPiece key={cellId} color={cellColor} chandler={()=>this.handleClick(cellId)}/>
+          <BoardPiece canMove={this.isMoveAllowed(cellId)} key={cellId} color={cellColor} chandler={()=>this.handleClick(cellId)}/>
         )
       }
       board.push(

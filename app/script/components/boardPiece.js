@@ -17,8 +17,12 @@ export default class BoardPiece extends React.Component{
         break;
     }
 
+    if(!this.props.canMove){
+      colorClass += " boardpiece-disabled";
+    }
+
     return (
-      <button onClick={this.props.chandler} className={"boardpiece " + colorClass}></button>
+      <button disabled={!this.props.canMove} onClick={this.props.chandler} className={"boardpiece " + colorClass}></button>
     );
   }
 }
@@ -26,6 +30,8 @@ export default class BoardPiece extends React.Component{
 BoardPiece.propTypes = {
   // 1=red, 2=black, else=none
   color: PropTypes.number.isRequired,
+
+  canMove: PropTypes.bool.isRequired,
 
   //Callback when this component is clicked
   chandler: PropTypes.func
