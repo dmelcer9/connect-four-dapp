@@ -84,8 +84,30 @@ export default class Board extends React.Component{
     //console.log(boardNums);
   }
 
+  detectWin(pieceToPlace, color){
+    var boardCopy = Array.from(this.state.board);
+
+    boardCopy[pieceToPlace] = color;
+
+    var startIndices = Array.from(boardCopy.keys());
+
+    //Find potential win at each idx
+    var wins =  startIndices.map(idx => this.detectWinOnPotentialBoard(boardCopy, idx, color))
+    //If no win was found, filter it out
+                .filter(Boolean);
+
+    if(wins.length == 0){
+      console.log("Placing piece does not cause a win.");
+      return false;
+    } else{
+      console.log("Placing piece does cause a win: " + wins[0]);
+      return wins[0];
+    }
+
+  }
+
   //Will this move cause a win
-  detectWin(moveToMake, color){
+  detectWinOnPotentialBoard(potentialBoard, startingLoc, color){
     const hasThreeSpacesToRight = piece=> piece / BOARD_WIDTH < BOARD_HEIGHT - 3;
     const hasThreeSpacesUp = piece=> piece % BOARD_WIDTH < BOARD_WIDTH - 3;
     const hasThreeSpacesToLeft = piece=> piece / BOARD_WIDTH >= 3;
@@ -94,21 +116,41 @@ export default class Board extends React.Component{
     const winDirections = [
       {
         type:"North",
-        boundary: hasThreeSpacesToRight;
+        boundary: hasThreeSpacesToRight,
+        offset: 7
       },
       {
         type:"Northeast",
-        boundary: both(hasThreeSpacesUp, hasThreeSpacesToRight);
+        boundary: both(hasThreeSpacesUp, hasThreeSpacesToRight),
+        offset: 8
       },
       {
         type:"East",
-        boundary: hasThreeSpacesToRight
+        boundary: hasThreeSpacesToRight,
+        offset: 1
       },
       {
         type:"Northwest",
-        boundary: both(hasThreeSpacesUp, hasThreeSpacesToLeft)
+        boundary: both(hasThreeSpacesUp, hasThreeSpacesToLeft),
+        offset: 6
       }
     ];
+
+    var potentialWins = winDirections
+      //Must be in-bounds for that type of win
+      .filter(direction => direction.boundary(startingLoc))
+      //Get all pieces included in the win
+      .map(direction => [startingLoc, startingLoc + direction.offset,
+                        startingLoc + (2*direction.offset), startingLoc + (3*direction.offset)])
+      //Do all pieces match the color?
+      .filter(boardPiecesToCheck => boardPiecesToCheck.every(piece => potentialBoard[piece] == color));
+
+    if(potentialWins.length == 0){
+      return false;
+    } else{
+      return potentialWins[0];
+    }
+
   }
 
   getGameState(whichOne){
@@ -124,10 +166,19 @@ export default class Board extends React.Component{
 
     console.log("Clicked " + String(pos));
 
+    var maybeWin = this.detectWin(pos, this.getWhoIsPlayer());
+
     this.setLoading();
 
     try{
-      await this.props.c4inst.makeMove(this.props.gameId, String(pos),{from:this.props.account});
+      if(maybeWin){
+        var winStr = maybeWin.map(String);
+        await this.props.c4inst.makeMoveAndClaimVictory(this.props.gameId, String(pos),
+                                                        winStr, {from:this.props.account});
+      } else{
+        await this.props.c4inst.makeMove(this.props.gameId, String(pos),{from:this.props.account});
+      }
+
     } catch(error){
       alert("Could not make move, see console for details.");
       console.error(error);
