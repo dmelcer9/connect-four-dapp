@@ -7,10 +7,11 @@
     "test": "test"
   },
   "scripts": {
-    "clean": "rm -rf dist && rm -rf build",
-    "build": "npm run clean && truffle compile && webpack",
+    "clean": "rm -rf build",
+    "build": "truffle compile && webpack",
     "dev": "truffle deploy --network ganache && webpack-dev-server",
     "test": "truffle deploy --network ganache && truffle test --network ganache",
+    "deploy-ropsten": "npm run clean && truffle compile && truffle migrate --network ropsten && webpack",
     "windev": "truffle.cmd deploy --network ganache && webpack-dev-server",
     "wintest": "truffle.cmd deploy --network ganache && truffle.cmd test --network ganache"
   },
@@ -29,6 +30,7 @@
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
     "truffle": "^4.0.4",
+    "truffle-hdwallet-provider": "0.0.3",
     "w3-css": "^4.0.4",
     "web3": "^1.0.0-beta.27",
     "zeppelin-solidity": "^1.5.0"
