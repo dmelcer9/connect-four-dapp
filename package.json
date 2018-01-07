@@ -7,7 +7,7 @@
     "test": "test"
   },
   "scripts": {
-    "clean": "rm -rf dist && rm -rf build",
+    "clean": "rm -rf build",
     "build": "truffle compile && webpack",
     "dev": "truffle deploy --network ganache && webpack-dev-server",
     "test": "truffle deploy --network ganache && truffle test --network ganache",
