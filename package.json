@@ -9,6 +9,7 @@
   "scripts": {
     "clean": "rm -rf build",
     "build": "truffle compile && webpack",
+    "webpack": "webpack",
     "dev": "truffle deploy --network ganache && webpack-dev-server",
     "test": "truffle deploy --network ganache && truffle test --network ganache",
     "deploy-ropsten": "npm run clean && truffle compile && truffle migrate --network ropsten && webpack",
