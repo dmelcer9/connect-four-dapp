@@ -15,3 +15,7 @@ To test changes:
    - `npm run test`
  - To deploy the contract to ganache and run a dev server:
    - `npm run dev`
+
+To deploy to ropsten (via infura):
+  - Modify truffle.js to include your desired mnemonic and infura API key
+  - `npm run deploy-ropsten`
