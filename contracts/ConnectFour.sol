@@ -1,7 +1,7 @@
 pragma solidity ^0.4.18;
 
-import "../node_modules/zeppelin-solidity/contracts/payment/PullPayment.sol";
-//function asyncSend(address dest, uint256 amount) internal;
+import "../node_modules/openzeppelin-solidity/contracts/payment/PullPayment.sol";
+//function asyncTransfer(address dest, uint256 amount) internal;
 //function withdrawPayments() public;
 
 contract ConnectFour is PullPayment {
@@ -89,7 +89,7 @@ contract ConnectFour is PullPayment {
     _;
   }
 
-  function ConnectFour(uint timeout) public {
+  constructor(uint timeout) public {
     moveTimeout = timeout;
   }
 
@@ -142,7 +142,7 @@ contract ConnectFour is PullPayment {
     games[gameId].isStarted = true;
     games[gameId].gameOver = true;
 
-    asyncSend(msg.sender, games[gameId].bid);
+    asyncTransfer(msg.sender, games[gameId].bid);
 
     logGameCancel(gameId);
   }
@@ -326,7 +326,7 @@ contract ConnectFour is PullPayment {
     games[gameId].gameOver = true;
     uint256 payout = games[gameId].bid * 2;
 
-    asyncSend(winner, payout);
+    asyncTransfer(winner, payout);
 
     logGameEnd(gameId, winner);
   }

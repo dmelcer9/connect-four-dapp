@@ -50,10 +50,20 @@ import BigNumber from "bignumber.js"
 
 window.addEventListener('load', async function() {
   try{
-    if(typeof web3 === 'undefined') throw "No web3 detected";
+
+    if(window.ethereum){
+      window.web3 = new Web3(ethereum);
+
+      await ethereum.enable();
+    } else if(window.web3){
+      window.web3 = new Web3(web3.currentProvider);
+    } else{
+      throw "No web3 detected";
+    }
+
     console.log("Connected to mist/metamask");
 
-    var web3used = new Web3(web3.currentProvider);
+    var web3used = window.web3;
 
     ConnectFour.setProvider(web3used.currentProvider);
 
